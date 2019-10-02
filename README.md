@@ -1,6 +1,6 @@
 # TASK-MANAGER
 
-## A COPY OF APPS LIKE TRELLO AND ASANA USED FOR PROJECT MANAGMENT
+## A Copy of Apps like Trello and Asana used for project managment
 
 This is a project I did in order to learn and practice coding with ReactJS.
 
