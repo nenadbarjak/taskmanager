@@ -89,7 +89,7 @@ const List = ({ list, index }) => {
                 ref={provided.innerRef}
                 >
                 <ListHeader title={list.title} id={list.id} />
-                <CardList id={list.id} list={list}/>
+                <AddCardButton openForm={openForm} />
                 <div>
                   <div ref={addCardContainer} className="add-card-container">
                     <form onSubmit={handleSubmit}>
@@ -98,7 +98,10 @@ const List = ({ list, index }) => {
                     </form>
                   </div>
                 </div>
-                <AddCardButton openForm={openForm} />
+
+                <CardList id={list.id} list={list}/>
+                
+                
                 {provided.placeholder}
               </div>
             )}

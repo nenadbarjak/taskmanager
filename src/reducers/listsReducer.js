@@ -22,7 +22,7 @@ const listsReducer = (state, action) => {
         if (list.id === action.task.listId) {
           return {
             ...list,
-            tasks: [...list.tasks, action.task]
+            tasks: [action.task, ...list.tasks]
           }
         } else {
           return list
