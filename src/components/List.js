@@ -1,14 +1,14 @@
 import React, { useRef, useState, useContext } from 'react';
-import uuid from 'uuid/v1'
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import ListHeader from './ListHeader'
 import AddCardButton from './AddCardButton'
 import CardList from './CardList'
-import { ListContext } from '../contexts/ListContext';
+import { BoardContext } from '../contexts/BoardContext';
+import { addCard } from '../actions/boardActions'
 
 const List = ({ list, index }) => {
 
-  const { listsDispatch } = useContext(ListContext)
+  const { boardsDispatch } = useContext(BoardContext)
 
   const [cardTitle, setCardTitle] = useState()
 
@@ -27,25 +27,37 @@ const List = ({ list, index }) => {
     setCardTitle(e.target.value)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!cardTitle) {
       closeForm()
-    } else {
-      listsDispatch({
-        type: 'ADD_CARD',
-        task: {
+    } else {      
+      addCard({
+        boardId: list.boardId, 
+        listId: list._id,
+        card: {
           title: cardTitle,
-          id: uuid(),
-          listId: list.id,
-          description: '',
-          modalVisible: false,
-          dueDate: undefined,
-          completed: false,
-          checklist: [],
-          assignedTo: undefined
+          listId: list._id
         }
+      }).then((result) => {
+        boardsDispatch({
+          type: 'ADD_CARD',
+          boardId: list.boardId,
+          listId: result.data.listId,
+          card: {
+            title: result.data.title,
+            _id: result.data._id,
+            listId: result.data.listId,
+            description: result.data.description,
+            modalVisible: result.data.modalVisible,
+            dueDate: result.data.modalVisible,
+            completed: result.data.completed,
+            checklist: result.data.checklist,
+            assignedTo: result.data.assignedTo
+          }
+        })
       })
+      
       setCardTitle('')
       closeForm()
     }
@@ -55,19 +67,30 @@ const List = ({ list, index }) => {
     if (!cardTitle) {
       closeForm()
     } else {
-      listsDispatch({
-        type: 'ADD_CARD',
-        task: {
+      addCard({
+        boardId: list.boardId, 
+        listId: list._id,
+        card: {
           title: cardTitle,
-          id: uuid(),
-          listId: list.id,
-          description: '',
-          modalVisible: false,
-          dueDate: undefined,
-          completed: false,
-          checklist: [],
-          assignedTo: undefined
+          listId: list._id
         }
+      }).then((result) => {
+        boardsDispatch({
+          type: 'ADD_CARD',
+          boardId: list.boardId,
+          listId: result.data.listId,
+          card: {
+            title: result.data.title,
+            _id: result.data._id,
+            listId: result.data.listId,
+            description: result.data.description,
+            modalVisible: result.data.modalVisible,
+            dueDate: result.data.modalVisible,
+            completed: result.data.completed,
+            checklist: result.data.checklist,
+            assignedTo: result.data.assignedTo
+          }
+        })
       })
       setCardTitle('')
       closeForm()
@@ -75,20 +98,20 @@ const List = ({ list, index }) => {
   }
 
   return (
-    <Draggable draggableId={String(list.id)} index={index}>
+    <Draggable draggableId={String(list._id)} index={index}>
       {provided => (
         <div 
           {...provided.draggableProps} 
           ref={provided.innerRef}
           {...provided.dragHandleProps}
         >
-          <Droppable droppableId={String(list.id)}>
+          <Droppable droppableId={String(list._id)}>
             {provided => (
               <div 
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 >
-                <ListHeader title={list.title} id={list.id} />
+                <ListHeader title={list.title} listId={list._id} boardId={list.boardId} />
                 <AddCardButton openForm={openForm} />
                 <div>
                   <div ref={addCardContainer} className="add-card-container">
@@ -99,7 +122,7 @@ const List = ({ list, index }) => {
                   </div>
                 </div>
 
-                <CardList id={list.id} list={list}/>
+                <CardList id={list._id} list={list}/>
                 
                 
                 {provided.placeholder}

@@ -5,29 +5,30 @@ import Card from './Card';
 
 
 const CardList = ({ id, list }) => {
-  const taskList = list.tasks
+  const cardList = list.cards
 
   return (
     <div>
-      {taskList && taskList.map((task, index) => {
+      {cardList && cardList.map((card, index) => {
         let textColor = 'black'
-        if (task.dueDate - moment() < 0) {
+        if (card.dueDate - moment() < 0) {
           textColor = 'red'
-        } else if (task.dueDate - moment() < 86400000) {
+        } else if (card.dueDate - moment() < 86400000) {
           textColor = 'green'
         }
 
-        const finishedChecklistItems = task && task.checklist.filter((item) => {
+        const finishedChecklistItems = card && card.checklist.filter((item) => {
           return item.finished === true
         })
 
         return (
           <Card 
-            task={task} 
+            boardId={list.boardId}
+            card={card} 
             textColor={textColor} 
             finishedChecklistItems={finishedChecklistItems} 
-            key={task.id} 
-            id={task.id}
+            key={card._id} 
+            id={card._id}
             index={index}  
           />
       )

@@ -1,10 +1,11 @@
 import React, { useContext, useRef } from 'react';
 import moment from 'moment'
 import { Draggable } from 'react-beautiful-dnd'
-import { ListContext } from '../contexts/ListContext'
+import { BoardContext } from '../contexts/BoardContext'
+import { editCard, deleteCard } from '../actions/boardActions'
 
-const Card = ({ task, textColor, finishedChecklistItems, id, index }) => {
-  const { listsDispatch, users } = useContext(ListContext) 
+const Card = ({ boardId, card, textColor, finishedChecklistItems, id, index }) => {
+  const { boardsDispatch, users } = useContext(BoardContext) 
 
   const optionsContent = useRef()
   const showOptionsContent = (e) => {
@@ -17,52 +18,73 @@ const Card = ({ task, textColor, finishedChecklistItems, id, index }) => {
         document.removeEventListener('click', closeOptionsContent)
       }
     }
-
     document.addEventListener('click', closeOptionsContent)
   }
 
-
   let user = users.filter((item) => {
-    return item.id === task.assignedTo
+    return item.id === card.assignedTo
   })[0]
 
   const cardOptions = useRef()
+
   const showCardOptions = () => {
     cardOptions.current.style.visibility = 'visible'
   }
+
   const hideCardOptions = () => {
     cardOptions.current.style.visibility = 'hidden'
   }
+
   const markComplete = (e) => {
     e.stopPropagation()
-    listsDispatch({
-      type: 'EDIT_CARD',
-      listId: task.listId,
-      id: task.id,
-      updates: {
-        completed: !task.completed
-      }
+
+    editCard(boardId, card.listId, card._id, {completed: !card.completed}).then((result) => {
+      boardsDispatch({
+        type: 'EDIT_CARD',
+        boardId,
+        listId: result.data.listId,
+        cardId: result.data._id,
+        updates: {
+          completed: result.data.completed
+        }
+      })
+    }).catch((e) => {
+      console.log(e)
     })
+    
   }
-  const deleteCard = (e) => {
+
+  const handleDelete = (e) => {
     e.stopPropagation()
-    listsDispatch({
-      type: 'REMOVE_CARD',
-      listId: task.listId,
-      id: task.id
-    })
+
+    deleteCard(boardId, card.listId, card._id).then((result) => {
+      boardsDispatch({
+        type: 'REMOVE_CARD',
+        boardId,
+        listId: result.data.listId,
+        cardId: result.data._id
+      })
+    }).catch((err) => {
+      console.log(err)
+    })    
   }
+
   const showModal = () => {
-    listsDispatch({
-      type: 'EDIT_CARD', 
-      id: task.id, 
-      listId: task.listId, 
-      updates: {
-        modalVisible: true
-      }
+    editCard(boardId, card.listId, card._id, {modalVisible: true}).then((result) => {
+      boardsDispatch({
+        type: 'EDIT_CARD',
+        boardId,
+        listId: result.data.listId,
+        cardId: result.data._id,          
+        updates: {
+          modalVisible: result.data.modalVisible
+        }
+      })
     })
+    
   }
-  const cardOpacity = task.completed ? 'completed-card' : ''
+
+  const cardOpacity = card.completed ? 'completed-card' : ''
 
   return (
     <Draggable draggableId={String(id)} index={index}>
@@ -76,15 +98,15 @@ const Card = ({ task, textColor, finishedChecklistItems, id, index }) => {
         >  
           <div 
             onClick={showModal}
-            className={`task-card ${cardOpacity}`}
+            className={`card ${cardOpacity}`}
             onMouseEnter={showCardOptions} 
             onMouseLeave={hideCardOptions} 
           >
-            <div className="task-title">{task.completed && <span className="fas fa-check-circle fa-lg" style={{color: 'green'}}></span>}<span className="task-title-text">{task.title}</span></div>
-            <div className="task-content"> 
-              <div className={task.assignedTo ? "avatar" : "avatar-unassigned"}><div>{task.assignedTo ? user.initials : <i className="far fa-user"></i>}</div></div>
-              <div className="due-date" style={{color: `${textColor}`}}>{task.dueDate && moment(task.dueDate).calendar()}</div>
-              {task.checklist.length > 0 && <div className="card-progress"><span className="far fa-check-square"></span>{` ${finishedChecklistItems.length} / ${task.checklist.length}`}</div>}
+            <div className="card-title">{card.completed && <span className="fas fa-check-circle fa-lg" style={{color: 'green'}}></span>}<span className="card-title-text">{card.title}</span></div>
+            <div className="card-content"> 
+              <div className={card.assignedTo ? "avatar" : "avatar-unassigned"}><div>{card.assignedTo ? user.initials : <i className="far fa-user"></i>}</div></div>
+              <div className="due-date" style={{color: `${textColor}`}}>{card.dueDate && moment(card.dueDate).calendar()}</div>
+              {card.checklist.length > 0 && <div className="card-progress"><span className="far fa-check-square"></span>{` ${finishedChecklistItems.length} / ${card.checklist.length}`}</div>}
               <div className="card-options" ref={cardOptions}>
                 <div className="open-card-options" onClick={showOptionsContent}>
                   <span className="fas fa-ellipsis-h fa-lg"></span>
@@ -92,8 +114,8 @@ const Card = ({ task, textColor, finishedChecklistItems, id, index }) => {
               </div>
             </div>
             <div className="options-content" ref={optionsContent}>
-              <div onClick={markComplete}><span>{task.completed ? 'Mark Incomplete' : 'Mark Complete'}</span></div>
-              <div onClick={deleteCard}><span style={{color: 'red'}}>Delete Card</span></div>
+              <div onClick={markComplete}><span>{card.completed ? 'Mark Incomplete' : 'Mark Complete'}</span></div>
+              <div onClick={handleDelete}><span style={{color: 'red'}}>Delete Card</span></div>
             </div>
           </div>
         </div>

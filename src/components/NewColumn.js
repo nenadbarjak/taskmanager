@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
-import uuid from 'uuid/v1'
-import { ListContext } from '../contexts/ListContext';
+import { BoardContext } from '../contexts/BoardContext';
+import { addList } from '../actions/boardActions'
 
-const NewColumn = () => {
+const NewColumn = ({ boardId }) => {
   const [listTitle, setListTitle] = useState('')
 
   const openForm = () => {
@@ -13,7 +13,7 @@ const NewColumn = () => {
     document.getElementById('testing').style.display = 'none' 
   }
 
-  const { listsDispatch } = useContext(ListContext)
+  const { boardsDispatch } = useContext(BoardContext)
 
   const handleChange = (e) => {
     setListTitle(e.target.value)
@@ -22,25 +22,39 @@ const NewColumn = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!listTitle) {
-      listsDispatch({
-        type: 'ADD_LIST',
+      addList({
+        boardId, 
         list: {
           title: 'Untitled Column',
-          id: uuid(),
-          tasks: []
+          boardId
         }
-      });
+      }).then((result) => {
+        boardsDispatch({
+          type: 'ADD_LIST',
+          boardId: result.data.boardId,
+          list: result.data
+        })
+      }).catch((e) => {
+        console.log(e)
+      })
       setListTitle('')
       closeForm()
     } else {
-      listsDispatch({
-        type: 'ADD_LIST',
+      addList({
+        boardId, 
         list: {
           title: listTitle,
-          id: uuid(),
-          tasks: []
+          boardId
         }
-      });
+      }).then((result) => {
+        boardsDispatch({
+          type: 'ADD_LIST',
+          boardId: result.data.boardId,
+          list: result.data
+        })
+      }).catch((e) => {
+        console.log(e)
+      })
       setListTitle('')
       closeForm()
     }
@@ -50,13 +64,20 @@ const NewColumn = () => {
     if (!listTitle) {
       closeForm()
     } else {
-      listsDispatch({
-        type: 'ADD_LIST',
+      addList({
+        boardId, 
         list: {
           title: listTitle,
-          id: uuid(),
-          tasks: []
+          boardId
         }
+      }).then((result) => {
+        boardsDispatch({
+          type: 'ADD_LIST',
+          boardId: result.data.boardId,
+          list: result.data
+        })
+      }).catch((e) => {
+        console.log(e)
       })
       setListTitle('')
       closeForm()

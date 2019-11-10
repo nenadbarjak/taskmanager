@@ -1,11 +1,12 @@
 import React, { useState, useRef, useContext } from 'react';
-import { ListContext } from '../contexts/ListContext';
+import { BoardContext } from '../contexts/BoardContext';
+import { deleteList, editListTitle } from '../actions/boardActions'
 
-const ListHeader = ({ title, id }) => {
+const ListHeader = ({ title, boardId, listId }) => {
 
   const [titleInput, setTitleInput] = useState(title)
 
-  const { listsDispatch } = useContext(ListContext)
+  const { boardsDispatch } = useContext(BoardContext)
 
   const handleChange = (e) => {
     setTitleInput(e.target.value)
@@ -18,18 +19,30 @@ const ListHeader = ({ title, id }) => {
 
   const handleBlur = () => {
     if (!titleInput) {
-      listsDispatch({
-        type: 'EDIT_LIST_TITLE',
-        id,
-        title: 'Untitled Column'
+      editListTitle(boardId, listId, {title: 'Untitled Column'}).then((result) => {
+        boardsDispatch({
+          type: 'EDIT_LIST_TITLE',
+          boardId,
+          listId: result.data._id,
+          title: result.data.title
+        })
+      }).catch((e) => {
+        console.log(e)
       })
+
       closeInput()
     } else {
-      listsDispatch({
-        type: 'EDIT_LIST_TITLE',
-        id,
-        title: titleInput
+      editListTitle(boardId, listId, {title: titleInput}).then((result) => {
+        boardsDispatch({
+          type: 'EDIT_LIST_TITLE',
+          boardId,
+          listId: result.data._id,
+          title: result.data.title
+        })
+      }).catch((e) => {
+        console.log(e)
       })
+      
       closeInput()
     }
   }
@@ -61,10 +74,16 @@ const ListHeader = ({ title, id }) => {
 
   const removeList = (e) => {
     e.stopPropagation()
-    listsDispatch({
-      type: 'REMOVE_LIST',
-      id
-    })
+    deleteList(boardId, listId).then((result) => {
+
+      boardsDispatch({
+        type: 'REMOVE_LIST',
+        boardId,
+        listId: result.data._id
+      })
+    }).catch((e) => {
+      console.log(e)
+    })   
   }
   return (
     <>

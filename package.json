@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.19.0",
+    "express": "^4.17.1",
     "firebase": "^7.0.0",
     "moment": "^2.24.0",
+    "mongoose": "^5.7.7",
     "react": "^16.9.0",
     "react-beautiful-dnd": "^11.0.5",
     "react-datepicker": "^2.9.6",
@@ -12,14 +15,15 @@
     "react-modal": "^3.10.1",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.1.1",
-    "react-select": "^3.0.4",
-    "uuid": "^3.3.2"
+    "react-select": "^3.0.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev-client": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev-server": "env-cmd -f ./config/dev.env nodemon server/index.js",
+    "start": "node server/index.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -35,5 +39,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "env-cmd": "^10.0.1",
+    "nodemon": "^1.19.4"
   }
 }

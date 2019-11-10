@@ -129,7 +129,7 @@ body {
 .card-options:hover {
   opacity: 1;
 }
-.task-card {
+.card {
   height: 77px;
   background: #fff;
   border: 1px solid transparent;
@@ -139,7 +139,7 @@ body {
   padding: 15px;
   transition: all 0.2s ease
 }
-.task-card:hover {
+.card:hover {
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
@@ -177,13 +177,13 @@ body {
   color: black;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
 }
-.task-title {
+.card-title {
   font-size: 13px;
 }
-.task-title-text {
+.card-title-text {
   margin-left: 8px;
 }
-.task-content {
+.card-content {
   display: flex;
   align-content: center;
   font-size: 11px;
@@ -242,7 +242,7 @@ input[type=text] {
   font-size: 16px;
   font-weight: bold;
 }
-.task-modal {
+.card-modal {
   position: absolute;
   top: 40px;
   left: 350px;
@@ -256,7 +256,7 @@ input[type=text] {
   outline: none;
   padding: 20px;
 }
-.task-modal-overlay {
+.card-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -384,14 +384,14 @@ input[type=text] {
   text-align: center;
   margin-right: 10px;
 }
-.task-description-input {
+.card-description-input {
   border: none;
   border-radius: 4px;
   resize: none;
   height: 80px;
   width: 100%;
 }
-.task-description-input:hover {
+.card-description-input:hover {
   border: 1px solid #d5dce0;
   background: #f6f8f9;
 }
@@ -404,7 +404,7 @@ input[type=text] {
   border-bottom: 1px solid #d5dce0;
   padding-bottom: 10px;
 }
-.task-description-input:focus {
+.card-description-input:focus {
   background: #fff;
 }
 .checklist-item {
