@@ -7,18 +7,30 @@ const ModalDescription = ({ card, boardId }) => {
   const { boardsDispatch } = useContext(BoardContext)
 
   const handleChange = (e) => {
-    editCard(boardId, card.listId, card._id, {description: e.target.value}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          description: result.data.description
-        }
-      })
+    boardsDispatch({
+      type: 'EDIT_CARD',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      updates: {
+        description: e.target.value
+      }
+    })   
+  }
+
+  const handleBlur = () => {
+    editCard(boardId, card.listId, card.id, {description: card.description}).then((result) => {
+      return
     }).catch((e) => {
       console.log(e)
+
+      boardsDispatch({
+        type: 'EDIT_BOARD',
+        boardId,
+        updates: {
+          errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+        }
+      })
     })
   }
 
@@ -32,7 +44,9 @@ const ModalDescription = ({ card, boardId }) => {
         id="description" 
         className="card-description-input" 
         value={card.description} 
-        placeholder="Add a more detailed description...">
+        placeholder="Add a more detailed description..."
+        onBlur={handleBlur}
+      >
       </textarea>
     </div>
   );

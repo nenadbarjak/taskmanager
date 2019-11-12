@@ -11,38 +11,48 @@ const ListHeader = ({ title, boardId, listId }) => {
   const handleChange = (e) => {
     setTitleInput(e.target.value)
   }
+
+  const sendErrMesg = () => {
+    boardsDispatch({
+      type: 'EDIT_BOARD',
+      boardId,
+      updates: {
+        errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+      }
+    })
+  }
+
+  const sendData = (title) => {
+    boardsDispatch({
+      type: 'EDIT_LIST_TITLE',
+      boardId,
+      listId,
+      title
+    })
+
+    editListTitle(boardId, listId, { title }).then((result) => {
+      return
+    }).catch((e) => {
+      console.log(e)
+      
+      sendErrMesg()
+    })
+  }
   
   const handleSubmit = (e) => {
     e.preventDefault()
+
     closeInput()
   }
 
   const handleBlur = () => {
     if (!titleInput) {
-      editListTitle(boardId, listId, {title: 'Untitled Column'}).then((result) => {
-        boardsDispatch({
-          type: 'EDIT_LIST_TITLE',
-          boardId,
-          listId: result.data._id,
-          title: result.data.title
-        })
-      }).catch((e) => {
-        console.log(e)
-      })
+      sendData('Untitled Column')
 
       closeInput()
     } else {
-      editListTitle(boardId, listId, {title: titleInput}).then((result) => {
-        boardsDispatch({
-          type: 'EDIT_LIST_TITLE',
-          boardId,
-          listId: result.data._id,
-          title: result.data.title
-        })
-      }).catch((e) => {
-        console.log(e)
-      })
-      
+      sendData(titleInput)
+
       closeInput()
     }
   }
@@ -74,15 +84,19 @@ const ListHeader = ({ title, boardId, listId }) => {
 
   const removeList = (e) => {
     e.stopPropagation()
-    deleteList(boardId, listId).then((result) => {
 
-      boardsDispatch({
-        type: 'REMOVE_LIST',
-        boardId,
-        listId: result.data._id
-      })
+    boardsDispatch({
+      type: 'REMOVE_LIST',
+      boardId,
+      listId
+    })
+
+    deleteList(boardId, listId).then((result) => {
+      return
     }).catch((e) => {
       console.log(e)
+      
+      sendErrMesg()
     })   
   }
   return (

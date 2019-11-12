@@ -1,4 +1,5 @@
 import React, { useState, useContext } from 'react';
+import uuid from 'uuid/v1'
 import { BoardContext } from '../contexts/BoardContext';
 import { addChecklistItem, editChecklistItem, deleteChecklistItem } from '../actions/boardActions'
 
@@ -22,38 +23,90 @@ const ModalChecklist = ({ card, boardId }) => {
     document.getElementById('note-input').focus()
   }
 
-  const handleCheckboxChange = (e, item) => {
-    editChecklistItem(boardId, card.listId, card._id, item._id, {finished: e.target.checked}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CHECKLIST_ITEM',
-        boardId,
-        listId: card.listId,
-        cardId: card._id,
-        checklistItemId: result.data._id,
-        updates: {
-          finished: result.data.finished
-        }
-      })
+  const sendErrMsg = () => {
+    boardsDispatch({
+      type: 'EDIT_BOARD',
+      boardId,
+      updates: {
+        errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+      }
     })
+  }
+
+  const sendNewItemData = (note) => {
+    const id = uuid()
+
+    boardsDispatch({
+      type: 'ADD_CHECKLIST_ITEM',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      checklistItem: {
+        note,
+        id
+      }
+    })
+
+    addChecklistItem({
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      checklistItem: {
+        note,
+        id
+      }
+    }).then((result) => {
+      return
+    }).catch((e) => {
+      console.log(e)
+
+      sendErrMsg()
+    })
+  }
+
+  const sendEditItemData = (checklistItemId, updates) => {
+    boardsDispatch({
+      type: 'EDIT_CHECKLIST_ITEM',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      checklistItemId,
+      updates
+    })
+    
+    editChecklistItem(boardId, card.listId, card.id, checklistItemId, updates).then((result) => {
+      return
+    }).catch((e) => {
+      console.log(e)
+
+      sendErrMsg()
+    })
+  }
+
+  const handleCheckboxChange = (e, item) => {
+    sendEditItemData(item.id, {finished: e.target.checked})
   }
 
   const handleChecklistNoteChange = (e, item) => {
     if (!e.target.value) {
-      removeItem(item._id)
+      removeItem(item.id)
     } else {
-      editChecklistItem(boardId, card.listId, card._id, item._id, {note: e.target.value}).then((result) => {
-        boardsDispatch({
-          type: 'EDIT_CHECKLIST_ITEM',
-          boardId,
-          listId: card.listId,
-          cardId: card._id,
-          checklistItemId: result.data._id,
-          updates: {
-            note: result.data.note
-          }
-        })
+
+      boardsDispatch({
+        type: 'EDIT_CHECKLIST_ITEM',
+        boardId,
+        listId: card.listId,
+        cardId: card.id,
+        checklistItemId: item.id,
+        updates: {
+          note: e.target.value
+        }
       })
     }   
+  }
+
+  const handleChecklistNoteInputBlur = (e, item) => {
+    sendEditItemData(item.id, {note: e.target.value})
   }
 
   const handleSubmit = (e) => {
@@ -61,24 +114,7 @@ const ModalChecklist = ({ card, boardId }) => {
     if (!checklistNote) {
       return
     } else {
-      addChecklistItem({
-        boardId,
-        listId: card.listId,
-        cardId: card._id,
-        checklistItem: {
-          note: checklistNote
-        }
-      }).then((result) => {
-        boardsDispatch({
-          type: 'ADD_CHECKLIST_ITEM',
-          boardId,
-          listId: card.listId,
-          cardId: card._id,
-          checklistItem: result.data
-        })
-      }).catch((e) => {
-        console.log(e)
-      })
+      sendNewItemData(checklistNote)
 
       setCheckListNote('')  
     }
@@ -92,39 +128,28 @@ const ModalChecklist = ({ card, boardId }) => {
       document.getElementById('note-input-container').style.display = 'none'
       document.getElementById('add-item-button').style.display = 'block'
     } else {
-      addChecklistItem({
-        boardId,
-        listId: card.listId,
-        cardId: card._id,
-        checklistItem: {
-          note: checklistNote
-        }
-      }).then((result) => {
-        boardsDispatch({
-          type: 'ADD_CHECKLIST_ITEM',
-          boardId,
-          listId: card.listId,
-          cardId: card._id,
-          checklistItem: result.data
-        })
-      }).catch((e) => {
-        console.log(e)
-      })
+      sendNewItemData(checklistNote)
       
       setCheckListNote('') 
       document.getElementById('note-input').focus()
     }
   }
 
-  const removeItem = (itemId) => {
-    deleteChecklistItem(boardId, card.listId, card._id, itemId).then((result) => {
-      boardsDispatch({
-        type: 'REMOVE_CHECKLIST_ITEM',
-        boardId,
-        listId: card.listId,
-        cardId: card._id,
-        checklistItemId: result.data._id  
-      })
+  const removeItem = (checklistItemId) => {
+    boardsDispatch({
+      type: 'REMOVE_CHECKLIST_ITEM',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      checklistItemId  
+    })
+
+    deleteChecklistItem(boardId, card.listId, card.id, checklistItemId).then((result) => {
+      return
+    }).catch((e) => {
+      console.log(e)
+
+      sendErrMsg()
     })
   }
 
@@ -162,7 +187,7 @@ const ModalChecklist = ({ card, boardId }) => {
           {card.checklist.length > 0 && 
             card.checklist.map((item) => {
               return (
-                <div key={item._id} className="checklist-item">
+                <div key={item.id} className="checklist-item">
                   <div className="checkbox-container">
                     <input 
                       type="checkbox" 
@@ -176,12 +201,13 @@ const ModalChecklist = ({ card, boardId }) => {
                       value={item.note} 
                       style={item.finished ? ({textDecoration: "line-through"}) : ({})} 
                       className="checklist-note-input" 
-                      onChange={(e) => handleChecklistNoteChange(e, item)} 
+                      onChange={(e) => handleChecklistNoteChange(e, item)}
+                      onBlur={(e) => handleChecklistNoteInputBlur(e, item)} 
                     />
                   </div>
                   <div 
                     className="delete-checklist-item" 
-                    onClick={() => removeItem(item._id)}
+                    onClick={() => removeItem(item.id)}
                   >
                     <i className="far fa-trash-alt"></i>
                   </div>

@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
+import uuid from 'uuid/v1'
 import { BoardContext } from '../contexts/BoardContext';
 import { addList } from '../actions/boardActions'
 
 const NewColumn = ({ boardId }) => {
+
   const [listTitle, setListTitle] = useState('')
 
   const openForm = () => {
@@ -19,42 +21,50 @@ const NewColumn = ({ boardId }) => {
     setListTitle(e.target.value)
   }
 
+  const sendData = (title) => {
+    const id = uuid()
+
+    boardsDispatch({
+      type: 'ADD_LIST',
+      boardId,
+      list: {
+        title,
+        boardId,
+        id,
+        cards: []
+      }
+    })
+    addList({
+      boardId,
+      list: {
+        title,
+        id,
+        boardId
+      }
+    }).then((result) => {
+      return
+    }).catch((e) => {
+      console.log(e)
+      boardsDispatch({
+        type: 'EDIT_BOARD',
+        boardId,
+        updates: {
+          errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+        }
+      })
+    })
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!listTitle) {
-      addList({
-        boardId, 
-        list: {
-          title: 'Untitled Column',
-          boardId
-        }
-      }).then((result) => {
-        boardsDispatch({
-          type: 'ADD_LIST',
-          boardId: result.data.boardId,
-          list: result.data
-        })
-      }).catch((e) => {
-        console.log(e)
-      })
+      sendData('Untitled Column')
+
       setListTitle('')
       closeForm()
     } else {
-      addList({
-        boardId, 
-        list: {
-          title: listTitle,
-          boardId
-        }
-      }).then((result) => {
-        boardsDispatch({
-          type: 'ADD_LIST',
-          boardId: result.data.boardId,
-          list: result.data
-        })
-      }).catch((e) => {
-        console.log(e)
-      })
+      sendData(listTitle)
+
       setListTitle('')
       closeForm()
     }
@@ -64,21 +74,8 @@ const NewColumn = ({ boardId }) => {
     if (!listTitle) {
       closeForm()
     } else {
-      addList({
-        boardId, 
-        list: {
-          title: listTitle,
-          boardId
-        }
-      }).then((result) => {
-        boardsDispatch({
-          type: 'ADD_LIST',
-          boardId: result.data.boardId,
-          list: result.data
-        })
-      }).catch((e) => {
-        console.log(e)
-      })
+      sendData(listTitle)
+
       setListTitle('')
       closeForm()
     }

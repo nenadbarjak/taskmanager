@@ -1,5 +1,6 @@
 import React, { useRef, useState, useContext } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd'
+import uuid from 'uuid/v1'
 import ListHeader from './ListHeader'
 import AddCardButton from './AddCardButton'
 import CardList from './CardList'
@@ -27,36 +28,54 @@ const List = ({ list, index }) => {
     setCardTitle(e.target.value)
   }
 
+  const sendData = (title) => {
+    const id = uuid()
+
+    boardsDispatch({
+      type: 'ADD_CARD',
+      boardId: list.boardId,
+      listId: list.id,
+      card: {
+        title,
+        id,
+        listId: list.id,
+        description: '',
+        modalVisible: false,
+        dueDate: undefined,
+        completed: false,
+        assignedTo: undefined,
+        checklist: []
+      }
+    })
+
+    addCard({
+      boardId: list.boardId,
+      listId: list.id,
+      card: {
+        title,
+        id,
+        listId: list.id
+      }
+    }).then((result) => {
+      return
+    }).catch((e) => {
+      console.log(e)
+      boardsDispatch({
+        type: 'EDIT_BOARD',
+        boardId: list.boardId,
+        updates: {
+          errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+        }
+      })
+    })
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!cardTitle) {
       closeForm()
-    } else {      
-      addCard({
-        boardId: list.boardId, 
-        listId: list._id,
-        card: {
-          title: cardTitle,
-          listId: list._id
-        }
-      }).then((result) => {
-        boardsDispatch({
-          type: 'ADD_CARD',
-          boardId: list.boardId,
-          listId: result.data.listId,
-          card: {
-            title: result.data.title,
-            _id: result.data._id,
-            listId: result.data.listId,
-            description: result.data.description,
-            modalVisible: result.data.modalVisible,
-            dueDate: result.data.modalVisible,
-            completed: result.data.completed,
-            checklist: result.data.checklist,
-            assignedTo: result.data.assignedTo
-          }
-        })
-      })
+    } else {
+      sendData(cardTitle)     
       
       setCardTitle('')
       closeForm()
@@ -67,51 +86,28 @@ const List = ({ list, index }) => {
     if (!cardTitle) {
       closeForm()
     } else {
-      addCard({
-        boardId: list.boardId, 
-        listId: list._id,
-        card: {
-          title: cardTitle,
-          listId: list._id
-        }
-      }).then((result) => {
-        boardsDispatch({
-          type: 'ADD_CARD',
-          boardId: list.boardId,
-          listId: result.data.listId,
-          card: {
-            title: result.data.title,
-            _id: result.data._id,
-            listId: result.data.listId,
-            description: result.data.description,
-            modalVisible: result.data.modalVisible,
-            dueDate: result.data.modalVisible,
-            completed: result.data.completed,
-            checklist: result.data.checklist,
-            assignedTo: result.data.assignedTo
-          }
-        })
-      })
+      sendData(cardTitle) 
+
       setCardTitle('')
       closeForm()
     }
   }
 
   return (
-    <Draggable draggableId={String(list._id)} index={index}>
+    <Draggable draggableId={String(list.id)} index={index}>
       {provided => (
         <div 
           {...provided.draggableProps} 
           ref={provided.innerRef}
           {...provided.dragHandleProps}
         >
-          <Droppable droppableId={String(list._id)}>
+          <Droppable droppableId={String(list.id)}>
             {provided => (
               <div 
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 >
-                <ListHeader title={list.title} listId={list._id} boardId={list.boardId} />
+                <ListHeader title={list.title} listId={list.id} boardId={list.boardId} />
                 <AddCardButton openForm={openForm} />
                 <div>
                   <div ref={addCardContainer} className="add-card-container">
@@ -122,7 +118,7 @@ const List = ({ list, index }) => {
                   </div>
                 </div>
 
-                <CardList id={list._id} list={list}/>
+                <CardList id={list.id} list={list}/>
                 
                 
                 {provided.placeholder}

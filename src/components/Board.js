@@ -38,15 +38,11 @@ const Board = () => {
     if (!destination) {
       return
     }
-    // In case of drag and drop, the state is updated before the database
-    //  to avoid bad UX when the dragged card is first returned to its original position
-    // and only after the resposne from server is moved to the correct position
-
-    // TODO: apply a logic that will undo the state dispatch in case server sends back an error.
+    
     boardsDispatch({
       type: 'DRAG_HAPPENED',
       payload: {
-        boardId: board._id,
+        boardId: board.id,
         droppableIdStart: source.droppableId,
         droppableIdEnd: destination.droppableId,
         droppableIndexStart: source.index,
@@ -57,7 +53,7 @@ const Board = () => {
     })
 
     dragAndDrop({
-      boardId: board._id,
+      boardId: board.id,
       droppableIdStart: source.droppableId,
       droppableIdEnd: destination.droppableId,
       droppableIndexStart: source.index,
@@ -65,9 +61,17 @@ const Board = () => {
       draggableId,
       type
     }).then((result) => {
- 
+      return
     }).catch((e) => {
       console.log(e)
+
+      boardsDispatch({
+        type: 'EDIT_BOARD',
+        boardId: board.id,
+        updates: {
+          errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+        }
+      })
     })       
   }
   
@@ -83,14 +87,14 @@ const Board = () => {
               return (
                 <div 
                 className="list-column" 
-                key={list._id}
+                key={list.id}
                 
               >
                 <List list={list} index={index} />
               </div>
               )
             })}
-            <NewColumn boardId={board._id} />
+            <NewColumn boardId={board.id} />
             {provided.placeholder}
           </div>
         )}

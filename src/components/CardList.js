@@ -27,8 +27,8 @@ const CardList = ({ id, list }) => {
             card={card} 
             textColor={textColor} 
             finishedChecklistItems={finishedChecklistItems} 
-            key={card._id} 
-            id={card._id}
+            key={card.id} 
+            id={card.id}
             index={index}  
           />
       )

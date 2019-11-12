@@ -9,6 +9,10 @@ const checklistItemSchema = new mongoose.Schema({
     finished: {
         type: Boolean,
         default: false
+    },
+    id: {
+        type: String,
+        required: true
     }
 })
 
@@ -17,6 +21,7 @@ checklistItemSchema.methods.toJSON = function () {
     const checklistItemObject = checklistItem.toObject()
 
     delete checklistItemObject.__v
+    delete checklistItemObject._id
 
     return checklistItemObject
 }
@@ -26,12 +31,17 @@ const ChecklistItem = mongoose.model('checklistItem', checklistItemSchema)
 const cardSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true,
+        default: '',
         trim: true
+    },
+    id: {
+        type: String,
+        required: true
     },
     description: {
         type: String,
-        default: ''
+        default: '',
+        trim: true
     },
     completed: {
         type: Boolean,
@@ -58,6 +68,7 @@ cardSchema.methods.toJSON = function () {
     const cardObject = card.toObject()
 
     delete cardObject.__v
+    delete cardObject._id
 
     return cardObject
 }
@@ -70,6 +81,10 @@ const listSchema = new mongoose.Schema({
         required: true,
         trim: true,
     },
+    id: {
+        type: String,
+        required: true
+    },
     boardId: {
         type: String
     },
@@ -81,6 +96,7 @@ listSchema.methods.toJSON = function () {
     const listObject = list.toObject()
 
     delete listObject.__v
+    delete listObject._id
 
     return listObject
 }
@@ -96,6 +112,14 @@ const boardSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    id: {
+        type: String,
+        required: true
+    },
+    errMsg: {
+        type: String,
+        default: ''
+    },
     lists: [listSchema],
 })
 
@@ -104,6 +128,7 @@ boardSchema.methods.toJSON = function () {
     const boardObject = board.toObject()
 
     delete boardObject.__v
+    delete boardObject._id
 
     return boardObject
 }

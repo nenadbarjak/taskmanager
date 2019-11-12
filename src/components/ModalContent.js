@@ -6,6 +6,7 @@ import ModalHeader from './ModalHeader';
 import ModalTitleAssignDue from './ModalTitleAssignDue'
 import ModalDescription from './ModalDescription';
 import ModalChecklist from './ModalChecklist';
+import ErrorMessage from './ErrorMessage';
 
 
 const ModalContent = () => {
@@ -13,6 +14,7 @@ const ModalContent = () => {
   const { boards, boardsDispatch } = useContext(BoardContext)
 
   const board = boards.length > 0 && boards.find(board => board.isActive)
+
   const list = board && board.lists.find((list) => {
     const card = list && list.cards.find(card => card.modalVisible)
     return card
@@ -20,18 +22,28 @@ const ModalContent = () => {
   const card = list && list.cards.find(card => card.modalVisible)
   
   const closeModal = () => {
-    editCard(board._id, card.listId, card._id, {modalVisible: null}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId: board._id,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          modalVisible: result.data.modalVisible
-        }
-      })
+    boardsDispatch({
+      type: 'EDIT_CARD',
+      boardId: board.id,
+      listId: card.listId,
+      cardId: card.id,
+      updates: {
+        modalVisible: !card.modalVisible
+      }
+    })
+
+    editCard(board.id, card.listId, card.id, {modalVisible: !card.modalVisible}).then((result) => {
+      return
     }).catch((e) => {
       console.log(e)
+
+      boardsDispatch({
+        type: 'EDIT_BOARD',
+        boardId: board.id,
+        updates: {
+          errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+        }
+      })
     })
   }
  
@@ -44,10 +56,11 @@ const ModalContent = () => {
     >
       {card && card.modalVisible && 
         <div className="modal-content">
-          <ModalHeader card={card} boardId={board._id} />
-          <ModalTitleAssignDue card={card} boardId={board._id} />
-          <ModalDescription card={card} boardId={board._id} />
-          <ModalChecklist card={card} boardId={board._id} />
+          <ErrorMessage />
+          <ModalHeader card={card} boardId={board.id} />
+          <ModalTitleAssignDue card={card} boardId={board.id} />
+          <ModalDescription card={card} boardId={board.id} />
+          <ModalChecklist card={card} boardId={board.id} />
         </div>
       }
     </Modal>

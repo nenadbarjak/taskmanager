@@ -6,55 +6,53 @@ const ModalHeader = ({ card, boardId }) => {
 
   const { boardsDispatch } = useContext(BoardContext)
 
-  const closeModal = () => {
-    editCard(boardId, card.listId, card._id, {modalVisible: null}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,  
-        updates: {
-          modalVisible: result.data.modalVisible
-        }
-      })
+  const sendErrMsg = () => {
+    boardsDispatch({
+      type: 'EDIT_BOARD',
+      boardId,
+      updates: {
+        errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+      }
+    })
+  }
+
+  const sendData = (payload) => {
+    boardsDispatch({
+      type: 'EDIT_CARD',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      updates: payload
+    })
+
+    editCard(boardId, card.listId, card.id, payload).then((result) => {
+      return
     }).catch((e) => {
       console.log(e)
+
+      sendErrMsg()
     })
   }
 
-  const toggleCompleted = () => {
-    editCard(boardId, card.listId, card._id, {completed: !card.completed}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          completed: result.data.completed
-        }
-      })
-    })
-  }
-
-    return (  
-        <div className="modal-content-header">
-          <div>
-            <button 
-              onClick={toggleCompleted} 
-              style={card.completed ? {background: 'green', color: 'white'} : {}} 
-              className="mark-complete-button"
-            >
-              {card.completed ? 
-                <span>&#9745; Completed</span> : 
-                <span>&#9744; Mark Complete</span>
-              }
-            </button>
-          </div>
-          <div>
-            <span className="close-modal fas fa-times fa-2x" onClick={closeModal}></span>
-          </div>
-        </div>
-    );
+  return (  
+    <div className="modal-content-header">
+      <div>
+        <button 
+          onClick={() => sendData({ completed: !card.completed })} 
+          style={card.completed ? {background: 'green', color: 'white'} : {}} 
+          className="mark-complete-button"
+        >
+          {card.completed ? 
+            <span>&#9745; Completed</span> : 
+            <span>&#9744; Mark Complete</span>
+          }
+        </button>
+      </div>
+      <div>
+        <span className="close-modal fas fa-times fa-2x" onClick={() => sendData({ modalVisible: !card.modalVisible })}></span>
+      </div>
+    </div>
+  );
 }
  
 export default ModalHeader;

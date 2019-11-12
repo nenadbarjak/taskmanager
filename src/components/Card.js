@@ -35,53 +35,77 @@ const Card = ({ boardId, card, textColor, finishedChecklistItems, id, index }) =
     cardOptions.current.style.visibility = 'hidden'
   }
 
+  const sendErrMsg = () => {
+    boardsDispatch({
+      type: 'EDIT_BOARD',
+      boardId,
+      updates: {
+        errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+      }
+    })
+  }
+
   const markComplete = (e) => {
     e.stopPropagation()
 
-    editCard(boardId, card.listId, card._id, {completed: !card.completed}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          completed: result.data.completed
-        }
-      })
+    boardsDispatch({
+      type: 'EDIT_CARD',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      updates: {
+        completed: !card.completed
+      }
+    })
+    editCard(boardId, card.listId, card.id, {completed: !card.completed}).then((result) => {
+      return
     }).catch((e) => {
       console.log(e)
+
+      sendErrMsg()
     })
+
     
   }
 
   const handleDelete = (e) => {
     e.stopPropagation()
 
-    deleteCard(boardId, card.listId, card._id).then((result) => {
-      boardsDispatch({
-        type: 'REMOVE_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id
-      })
-    }).catch((err) => {
-      console.log(err)
-    })    
+    boardsDispatch({
+      type: 'REMOVE_CARD',
+      boardId,
+      listId: card.listId,
+      cardId: card.id
+    })
+
+    deleteCard(boardId, card.listId, card.id).then((result) => {
+      return
+    }).catch((e) => {
+      console.log(e)
+
+      sendErrMsg()
+    })  
   }
 
   const showModal = () => {
-    editCard(boardId, card.listId, card._id, {modalVisible: true}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,          
-        updates: {
-          modalVisible: result.data.modalVisible
-        }
-      })
+    boardsDispatch({
+      type: 'EDIT_CARD',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      updates: {
+        modalVisible: !card.modalVisible
+      }
     })
-    
+
+
+    editCard(boardId, card.listId, card.id, {modalVisible: true}).then((result) => {
+      return
+    }).catch((e) => {
+      console.log(e)
+      
+      sendErrMsg()
+    }) 
   }
 
   const cardOpacity = card.completed ? 'completed-card' : ''
@@ -102,11 +126,27 @@ const Card = ({ boardId, card, textColor, finishedChecklistItems, id, index }) =
             onMouseEnter={showCardOptions} 
             onMouseLeave={hideCardOptions} 
           >
-            <div className="card-title">{card.completed && <span className="fas fa-check-circle fa-lg" style={{color: 'green'}}></span>}<span className="card-title-text">{card.title}</span></div>
+            <div className="card-title">
+              {card.completed && 
+                <span className="fas fa-check-circle fa-lg" style={{color: 'green'}}></span>
+              }
+              <span className="card-title-text">{card.title}</span>
+            </div>
             <div className="card-content"> 
-              <div className={card.assignedTo ? "avatar" : "avatar-unassigned"}><div>{card.assignedTo ? user.initials : <i className="far fa-user"></i>}</div></div>
-              <div className="due-date" style={{color: `${textColor}`}}>{card.dueDate && moment(card.dueDate).calendar()}</div>
-              {card.checklist.length > 0 && <div className="card-progress"><span className="far fa-check-square"></span>{` ${finishedChecklistItems.length} / ${card.checklist.length}`}</div>}
+              <div className={card.assignedTo ? "avatar" : "avatar-unassigned"}>
+                <div>
+                  {card.assignedTo ? user.initials : <i className="far fa-user"></i>}
+                </div>
+              </div>
+              <div className="due-date" style={{color: `${textColor}`}}>
+                {card.dueDate && moment(card.dueDate).calendar()}
+              </div>
+              {card.checklist.length > 0 && 
+                <div className="card-progress">
+                  <span className="far fa-check-square"></span>
+                  {` ${finishedChecklistItems.length} / ${card.checklist.length}`}
+                </div>
+              }
               <div className="card-options" ref={cardOptions}>
                 <div className="open-card-options" onClick={showOptionsContent}>
                   <span className="fas fa-ellipsis-h fa-lg"></span>
@@ -120,7 +160,6 @@ const Card = ({ boardId, card, textColor, finishedChecklistItems, id, index }) =
           </div>
         </div>
       )}
-
 
     </Draggable>
   );

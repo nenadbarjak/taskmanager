@@ -66,68 +66,54 @@ const ModalTitleAssignDue = ({ card, boardId }) => {
     }
   }
 
-  const handleChange = (e) => {
-    editCard(boardId, card.listId, card._id, {title: e.target.value}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          title: result.data.title
-        }
-      })
+  const sendData = (updates) => {
+    boardsDispatch({
+      type: 'EDIT_CARD',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      updates
+    })
+
+    editCard(boardId, card.listId, card.id, updates).then((result) => {
+      return
     }).catch((e) => {
       console.log(e)
-    })   
+
+      boardsDispatch({
+        type: 'EDIT_BOARD',
+        boardId,
+        updates: {
+          errMsg: 'ERROR! COULD NOT CONNECT TO DATABASE. PLEASE REFRESH THE PAGE AND TRY AGAIN.'
+        }
+      })
+    })
   }
 
-  const changeDate = (date, id) => {
-    editCard(boardId, card.listId, id, {dueDate: date.getTime()}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          dueDate: result.data.dueDate
-        }
-      })
-    }).catch((e) => {
-      console.log(e)
-    })    
+  const handleChange = (e) => {
+    boardsDispatch({
+      type: 'EDIT_CARD',
+      boardId,
+      listId: card.listId,
+      cardId: card.id,
+      updates: {
+        title: e.target.value
+      }
+    })  
+  }
+
+  const handleBlur = () => {
+    sendData({title: card.title})
   }
 
   const clearDate = (e) => {
     e.stopPropagation()
-    
-    editCard(boardId, card.listId, card._id, {dueDate: null}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          dueDate: result.data.dueDate
-        }
-      })
-    }).catch((e) => {
-      console.log(e)
-    })  
+
+    sendData({dueDate: null})  
   }
 
   const handleUserChange = (e) => {
-    editCard(boardId, card.listId, card._id, {assignedTo: e ? e.value : null}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          assignedTo: result.data.assignedTo
-        }
-      })
-    })
+    sendData({assignedTo: e ? e.value : null})
     
     closeUsersList()
   }
@@ -135,19 +121,7 @@ const ModalTitleAssignDue = ({ card, boardId }) => {
   const unAssignUser = (e) => {
     e.stopPropagation()
 
-    editCard(boardId, card.listId, card._id, {assignedTo: null}).then((result) => {
-      boardsDispatch({
-        type: 'EDIT_CARD',
-        boardId,
-        listId: result.data.listId,
-        cardId: result.data._id,
-        updates: {
-          assignedTo: result.data.assignedTo
-        }
-      })
-    }).catch((e) => {
-      console.log(e)
-    })
+    sendData({assignedTo: null})
   }
 
   return (  
@@ -157,7 +131,8 @@ const ModalTitleAssignDue = ({ card, boardId }) => {
         onChange={handleChange} 
         value={card.title} 
         id="title" 
-        className="modal-title-input" 
+        className="modal-title-input"
+        onBlur={handleBlur} 
       />
 
       <div className="assigned-due-container">
@@ -231,7 +206,7 @@ const ModalTitleAssignDue = ({ card, boardId }) => {
           <DatePicker id="date-input"
             selected={card.dueDate}
             showTimeSelect
-            onChange={(date) => changeDate(date, card._id)}
+            onChange={(date) => sendData({ dueDate: date.getTime() })}
             onBlur={closeDatePicker}
           />
         </div>

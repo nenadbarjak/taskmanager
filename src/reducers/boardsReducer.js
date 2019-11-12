@@ -7,13 +7,23 @@ const boardReducer = (state, action) => {
       return [...state, action.board]
 
     case 'REMOVE_BOARD':
-      return state.filter(board => board._id !== action.boardId)
+      return state.filter(board => board.id !== action.boardId)
 
-    // case 'EDIT_BOARD_TITLE ???
+    case 'EDIT_BOARD':
+      return state.map((board) => {
+        if (board.id === action.boardId) {
+          return {
+            ...board,
+            ...action.updates
+          }
+        } else {
+          return board
+        }
+      })
 
     case 'ADD_LIST':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
           return {
             ...board,
             lists: [...board.lists, action.list]
@@ -25,10 +35,10 @@ const boardReducer = (state, action) => {
 
     case 'REMOVE_LIST':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
           return {
             ...board,
-            lists: board.lists.filter(list => list._id !== action.listId)
+            lists: board.lists.filter(list => list.id !== action.listId)
           }
         } else {
           return board
@@ -37,11 +47,11 @@ const boardReducer = (state, action) => {
 
     case 'EDIT_LIST_TITLE':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
           return {
             ...board,
             lists: board.lists.map((list) => {
-              if (list._id === action.listId) {
+              if (list.id === action.listId) {
                 return {
                   ...list,
                   title: action.title
@@ -58,11 +68,11 @@ const boardReducer = (state, action) => {
 
     case 'ADD_CARD':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
           return {
             ...board,
             lists: board.lists.map((list) => {
-              if (list._id === action.listId) {
+              if (list.id === action.listId) {
                 return {
                   ...list,
                   cards: [
@@ -81,15 +91,15 @@ const boardReducer = (state, action) => {
       })
     case 'EDIT_CARD':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
             return {
               ...board,
               lists: board.lists.map((list) => {
-                if (list._id === action.listId) {
+                if (list.id === action.listId) {
                   return {
                     ...list,
                     cards: list.cards.map((card) => {
-                      if (card._id === action.cardId) {
+                      if (card.id === action.cardId) {
                         return {
                           ...card,
                           ...action.updates
@@ -110,14 +120,14 @@ const boardReducer = (state, action) => {
       })
     case 'REMOVE_CARD':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
           return {
             ...board,
             lists: board.lists.map((list) => {
-              if (list._id === action.listId) {
+              if (list.id === action.listId) {
                 return {
                   ...list,
-                  cards: list.cards.filter(card => card._id !== action.cardId)
+                  cards: list.cards.filter(card => card.id !== action.cardId)
                 }
               } else {
                 return list
@@ -131,15 +141,15 @@ const boardReducer = (state, action) => {
 
     case 'ADD_CHECKLIST_ITEM':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
           return {
             ...board,
             lists: board.lists.map((list) => {
-              if (list._id === action.listId) {
+              if (list.id === action.listId) {
                 return {
                   ...list,
                   cards: list.cards.map((card) => {
-                    if (card._id === action.cardId) {
+                    if (card.id === action.cardId) {
                       return {
                         ...card,
                         checklist: [
@@ -162,19 +172,19 @@ const boardReducer = (state, action) => {
     
     case 'EDIT_CHECKLIST_ITEM':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
           return {
             ...board,
             lists: board.lists.map((list) => {
-              if (list._id === action.listId) {
+              if (list.id === action.listId) {
                 return {
                   ...list,
                   cards: list.cards.map((card) => {
-                    if (card._id === action.cardId) {
+                    if (card.id === action.cardId) {
                       return {
                         ...card,
                         checklist: card.checklist.map((item) => {
-                          if (item._id === action.checklistItemId) {
+                          if (item.id === action.checklistItemId) {
                             return {
                               ...item,
                               ...action.updates
@@ -199,18 +209,18 @@ const boardReducer = (state, action) => {
 
     case 'REMOVE_CHECKLIST_ITEM':
       return state.map((board) => {
-        if (board._id === action.boardId) {
+        if (board.id === action.boardId) {
           return {
             ...board,
             lists: board.lists.map((list) => {
-              if (list._id === action.listId) {
+              if (list.id === action.listId) {
                 return {
                   ...list,
                   cards: list.cards.map((card) => {
-                    if (card._id === action.cardId) {
+                    if (card.id === action.cardId) {
                       return {
                         ...card,
-                        checklist: card.checklist.filter(item => item._id !== action.checklistItemId)
+                        checklist: card.checklist.filter(item => item.id !== action.checklistItemId)
                       }
                     } else {
                       return card
@@ -240,7 +250,7 @@ const boardReducer = (state, action) => {
   
         // dragging lists
         if (type === "list") {
-          const board = state.find(board => board._id === boardId)
+          const board = state.find(board => board.id === boardId)
           
           const list = board.lists.splice(droppableIndexStart, 1)
           board.lists.splice(droppableIndexEnd, 0, ...list)
@@ -250,24 +260,24 @@ const boardReducer = (state, action) => {
         
         // in the same list
         if (droppableIdStart === droppableIdEnd) {
-          const board = state.find(board => board._id === boardId) 
+          const board = state.find(board => board.id === boardId) 
 
-          const list = board.lists.find(list => droppableIdStart === list._id)
+          const list = board.lists.find(list => droppableIdStart === list.id)
           const card = list.cards.splice(droppableIndexStart, 1)
           list.cards.splice(droppableIndexEnd, 0, ...card)
         }
         // other list
         if (droppableIdStart !== droppableIdEnd) {
-          const board = state.find(board => board._id === boardId) 
+          const board = state.find(board => board.id === boardId) 
 
           // find the list where drag started
-          const listStart = board.lists.find(list => droppableIdStart === list._id)
+          const listStart = board.lists.find(list => droppableIdStart === list.id)
   
           // pull out the card from this list
           const card = listStart.cards.splice(droppableIndexStart, 1)
   
           // find the list where drag ended
-          const listEnd = board.lists.find(list => droppableIdEnd === list._id)
+          const listEnd = board.lists.find(list => droppableIdEnd === list.id)
 
           //change the listId prop of the card
           card[0].listId = droppableIdEnd
