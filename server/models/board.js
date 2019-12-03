@@ -121,6 +121,11 @@ const boardSchema = new mongoose.Schema({
         default: ''
     },
     lists: [listSchema],
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    }
 })
 
 boardSchema.methods.toJSON = function () {
@@ -129,6 +134,7 @@ boardSchema.methods.toJSON = function () {
 
     delete boardObject.__v
     delete boardObject._id
+    delete boardObject.owner
 
     return boardObject
 }

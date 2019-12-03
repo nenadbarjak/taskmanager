@@ -1,31 +1,54 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
 import { BoardContext } from '../contexts/BoardContext';
 import List from './List';
 import NewColumn from './NewColumn';
 import { getBoards, dragAndDrop } from '../actions/boardActions'
+import { setAxiosToken } from '../services/axiosPreset'
 
+const Board = ({ history }) => {
+  const { boards, boardsDispatch, auth, authDispatch } = useContext(BoardContext) 
 
-const Board = () => {
-  const { boards, boardsDispatch } = useContext(BoardContext)
+  const [isLoading, setIsLoading] = useState(false)
 
   const board = boards.length > 0 && boards.find(board => board.isActive)
 
   const getInitState = () => {
+    setIsLoading(true)
     getBoards().then((result) => {
+      setIsLoading(false)
       const boards = result.data
 
+      if (boards.length === 0 || !boards.find(board => board.isActive)) {
+        history.push('/addboard')
+      }
       boardsDispatch({
         type: 'SET_BOARDS',
         boards
       })
     }).catch ((e) => {
       console.log(e)
+
+      if (e.response.status === 401) {
+        setIsLoading(false)
+
+        const token = JSON.parse(localStorage.getItem('TM_App_token'))
+
+        if (token) {
+          (localStorage.removeItem('TM_App_token'))
+        }
+
+        setAxiosToken()
+
+        authDispatch({ type: 'LOGOUT' })
+        history.push('/signin')
+      }
     })
   }
 
   useEffect(() => {
-    if (boards.length === 0) {
+    if (boards.length === 0 && auth.token) {
       getInitState()
       
     }
@@ -74,6 +97,15 @@ const Board = () => {
       })
     })       
   }
+  
+  if (!auth.token) {
+    return <Redirect to='/signin' />
+  } 
+
+  if (isLoading) {
+    return <div className="spinner"><span className="fas fa-spinner fa-5x fa-spin"></span></div>
+  }
+
   
   return (
     <DragDropContext onDragEnd={onDragEnd}>

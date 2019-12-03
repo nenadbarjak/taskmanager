@@ -8,7 +8,7 @@ import { BoardContext } from '../contexts/BoardContext';
 import { addCard } from '../actions/boardActions'
 
 const List = ({ list, index }) => {
-
+  //console.log(uuid())
   const { boardsDispatch } = useContext(BoardContext)
 
   const [cardTitle, setCardTitle] = useState()

@@ -1,11 +1,16 @@
 const express = require('express')
+const auth = require('../middleware/auth')
 const router = new express.Router()
 const { Board, Card, List, ChecklistItem } = require('../models/board')
 
 // Get all boards
-router.get('/boards', async (req, res) => {
+router.get('/boards', auth, async (req, res) => {
     try {
-        const boards = await Board.find({})
+        await req.user.populate({
+            path: 'boards'
+        }).execPopulate()
+        res.send(req.user.boards)
+        // const boards = await Board.find({})
         res.send(boards)
     } catch (e) {
         res.status(500).send()
@@ -13,26 +18,72 @@ router.get('/boards', async (req, res) => {
 })
 
 // Add a new board
-router.post('/boards', async (req, res) => {
+router.post('/boards', auth, async (req, res) => {
     const board = new Board({
-        ...req.body
+        ...req.body,
+        owner: req.user._id
     })
 
     try {
+        const prevBoard = await Board.findOne({ isActive: true, owner: req.user._id })
+        if (prevBoard) {
+            prevBoard.isActive = !prevBoard.isActive
+            await prevBoard.save()
+        }
+
         await board.save()
         res.status(201).send(board)
     } catch (e) {
+        console.log(e)
         res.status(400).send()
     }
 })
-// TODO: Delete board and Edit Board Title
+// Edit board
+router.patch('/boards/:boardId', auth, async (req, res) => {
+    try {
+        const updates = Object.keys(req.body)
+        if (updates.includes('isActive')) {
+            const prevBoard = await Board.findOne({ isActive: true, owner: req.user._id })
+            if (prevBoard) {
+                prevBoard.isActive = !prevBoard.isActive
+                await prevBoard.save()
+            }            
+        }
+
+        const board = await Board.findOne({ id: req.params.boardId, owner: req.user._id })
+        if (!board) {
+            return res.status(404).send()
+        }
+        updates.forEach(update => board[update] = req.body[update])
+
+        await board.save()
+        res.send(board)
+
+    } catch (e) {
+        res.status(500).send()
+    }
+})
+
+// Delete board 
+router.delete('/boards/:boardId', auth, async (req, res) => {
+    try {   
+        const board = await Board.findOneAndDelete({ id: req.params.boardId, owner: req.user._id })
+        if (!board) {
+            res.status(404).send()
+        }
+
+        res.send(board)
+    } catch (e) {
+        res.status(500).send()
+    }
+})
 
 // Add a new list
-router.post('/boards/lists', async (req, res) => {   
+router.post('/boards/lists', auth, async (req, res) => {   
     const list = new List(req.body.list)
     
     try {
-        const board = await Board.findOne({ id: req.body.boardId })       
+        const board = await Board.findOne({ id: req.body.boardId, owner: req.user._id })       
         if (!board) {
             return res.status(404).send()
         }
@@ -47,9 +98,9 @@ router.post('/boards/lists', async (req, res) => {
 })
 
 // Edit list title
-router.patch('/boards/:boardId/lists/:listId', async (req, res) => {
+router.patch('/boards/:boardId/lists/:listId', auth, async (req, res) => {
     try {
-        const board = await Board.findOne({ id: req.params.boardId })
+        const board = await Board.findOne({ id: req.params.boardId, owner: req.user._id })
         if (!board) {
             return res.status(404).send()
         }
@@ -69,9 +120,9 @@ router.patch('/boards/:boardId/lists/:listId', async (req, res) => {
 })
 
 //Delete a list
-router.delete('/boards/:boardId/lists/:listId', async (req, res) => {
+router.delete('/boards/:boardId/lists/:listId', auth, async (req, res) => {
     try {
-        const board = await Board.findOne({ id: req.params.boardId })
+        const board = await Board.findOne({ id: req.params.boardId, owner: req.user._id })
         if (!board) {
             return res.status(404).send()
         }
@@ -91,9 +142,9 @@ router.delete('/boards/:boardId/lists/:listId', async (req, res) => {
 })
 
 //Add a new card
-router.post('/boards/lists/cards', async (req, res) => {
+router.post('/boards/lists/cards', auth, async (req, res) => {
     try {
-        const board = await Board.findOne({ id: req.body.boardId })
+        const board = await Board.findOne({ id: req.body.boardId, owner: req.user._id })
         if (!board) {
             return res.status(404).send()
         }
@@ -119,9 +170,9 @@ router.post('/boards/lists/cards', async (req, res) => {
 })
 
 // Edit card
-router.patch('/boards/:boardId/lists/:listId/cards/:cardId', async (req, res) => {
+router.patch('/boards/:boardId/lists/:listId/cards/:cardId', auth, async (req, res) => {
     try {
-        const board = await Board.findOne({ id: req.params.boardId })
+        const board = await Board.findOne({ id: req.params.boardId, owner: req.user._id })
         if (!board) {
             return res.status(404).send()
         }
@@ -147,9 +198,9 @@ router.patch('/boards/:boardId/lists/:listId/cards/:cardId', async (req, res) =>
 })
 
 // Delete a card
-router.delete('/boards/:boardId/lists/:listId/cards/:cardId', async (req, res) => {    
+router.delete('/boards/:boardId/lists/:listId/cards/:cardId', auth, async (req, res) => {    
     try {
-        const board = await Board.findOne({ id: req.params.boardId })
+        const board = await Board.findOne({ id: req.params.boardId, owner: req.user._id })
         if (!board) {
             return res.status(404).send()
         }
@@ -174,9 +225,9 @@ router.delete('/boards/:boardId/lists/:listId/cards/:cardId', async (req, res) =
 })
 
 // Add Checklist item
-router.post('/boards/lists/cards/checklist', async (req, res) => {
+router.post('/boards/lists/cards/checklist', auth, async (req, res) => {
     try {
-        const board = await Board.findOne({ id: req.body.boardId })
+        const board = await Board.findOne({ id: req.body.boardId, owner: req.user._id })
         if (!board) {
             res.status(404).send()
         }
@@ -206,9 +257,9 @@ router.post('/boards/lists/cards/checklist', async (req, res) => {
 })
 
 // Edit checklist item
-router.patch('/boards/:boardId/lists/:listId/cards/:cardId/checklist/:checklistItemId', async (req, res) => {
+router.patch('/boards/:boardId/lists/:listId/cards/:cardId/checklist/:checklistItemId', auth, async (req, res) => {
     try {
-        const board = await Board.findOne({ id: req.params.boardId })
+        const board = await Board.findOne({ id: req.params.boardId, owner: req.user._id })
         if (!board) {
             return res.status(404).send()
         }
@@ -239,9 +290,9 @@ router.patch('/boards/:boardId/lists/:listId/cards/:cardId/checklist/:checklistI
 })
 
 // Delete a checklist item
-router.delete('/boards/:boardId/lists/:listId/cards/:cardId/checklist/:checklistItemId', async (req, res) => {    
+router.delete('/boards/:boardId/lists/:listId/cards/:cardId/checklist/:checklistItemId', auth, async (req, res) => {    
     try {
-        const board = await Board.findOne({ id: req.params.boardId })
+        const board = await Board.findOne({ id: req.params.boardId, owner: req.user._id })
         if (!board) {
             return res.status(404).send()
         }
@@ -271,9 +322,9 @@ router.delete('/boards/:boardId/lists/:listId/cards/:cardId/checklist/:checklist
 })
 
 // Drag and drop happened
-router.patch('/drag', async (req, res) => {
+router.patch('/drag', auth, async (req, res) => {
     try {
-        const board = await Board.findOne({ id: req.body.boardId })
+        const board = await Board.findOne({ id: req.body.boardId, owner: req.user._id })
             if (!board) {
                 res.status(404).send()
             }

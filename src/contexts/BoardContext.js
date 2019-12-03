@@ -1,6 +1,7 @@
 import React, { createContext, useReducer } from 'react';
 import boardsReducer from '../reducers/boardsReducer'
 import usersReducer from '../reducers/usersReducer'
+import authReducer from '../reducers/authReducer'
 
 export const BoardContext = createContext()
 
@@ -45,12 +46,15 @@ const usersInitState = [
   }
 ]
 
+const authInitState = {}
+
 const BoardContextProvider = (props) => {
   const [users] = useReducer(usersReducer, usersInitState)
   const [boards, boardsDispatch] = useReducer(boardsReducer, boardsInitState)
+  const [auth, authDispatch] = useReducer(authReducer, authInitState)
 
   return (
-    <BoardContext.Provider value={{boards, boardsDispatch, users}}>
+    <BoardContext.Provider value={{boards, boardsDispatch, users, auth, authDispatch}}>
       {props.children}
     </BoardContext.Provider>
   );

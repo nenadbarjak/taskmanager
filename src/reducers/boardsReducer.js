@@ -4,7 +4,17 @@ const boardReducer = (state, action) => {
       return [...action.boards]
 
     case 'ADD_BOARD':
-      return [...state, action.board]
+      const prevBoards = [...state]
+
+      const prevBoard = state.find(board => board.isActive)
+      if (prevBoard) {
+        prevBoard.isActive = !prevBoard.isActive
+      }
+      
+      return [
+        ...prevBoards,
+        action.board
+      ]
 
     case 'REMOVE_BOARD':
       return state.filter(board => board.id !== action.boardId)
@@ -19,6 +29,25 @@ const boardReducer = (state, action) => {
         } else {
           return board
         }
+      })
+
+    case 'SWITCH_BOARDS':
+      const prevBoardsList = [...state]
+
+      const prevActiveBoard = state.find(board => board.isActive)
+      if (prevActiveBoard) {
+        prevActiveBoard.isActive = !prevActiveBoard.isActive
+      }
+
+      return prevBoardsList.map((board) => {
+        if (board.id === action.boardId) {
+          return {
+            ...board,
+            isActive: !board.isActive
+          }
+        } else {
+          return board
+        } 
       })
 
     case 'ADD_LIST':

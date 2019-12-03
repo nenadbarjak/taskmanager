@@ -1,9 +1,12 @@
-import axios from 'axios'
+import axios from '../services/axiosPreset'
 
 export const getBoards = () => axios.get('/boards')
 
-// TODO: This option needs to be added to the clientside. Also delete board
 export const addBoard = (board) => axios.post('/boards', board)
+
+export const editBoard = (boardId, payload) => axios.patch(`/boards/${boardId}`, payload)
+
+export const deleteBoard = (boardId) => axios.delete(`/boards/${boardId}`)
 
 export const addList = (payload) => axios.post('/boards/lists', payload)
 
