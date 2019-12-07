@@ -96,14 +96,17 @@ const List = ({ list, index }) => {
   return (
     <Draggable draggableId={String(list.id)} index={index}>
       {provided => (
-        <div 
+        <div
+          className="list-column"
+        
           {...provided.draggableProps} 
           ref={provided.innerRef}
           {...provided.dragHandleProps}
         >
           <Droppable droppableId={String(list.id)}>
             {provided => (
-              <div 
+              <div
+                style={{height: '100%'}} 
                 {...provided.droppableProps}
                 ref={provided.innerRef}
                 >

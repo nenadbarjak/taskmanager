@@ -117,17 +117,13 @@ const Board = ({ history }) => {
           >
             {board && board.lists.map((list, index) => {
               return (
-                <div 
-                className="list-column" 
-                key={list.id}
-                
-              >
-                <List list={list} index={index} />
-              </div>
+                <List key={list.id} list={list} index={index} />
               )
             })}
-            <NewColumn boardId={board.id} />
             {provided.placeholder}
+
+            <NewColumn boardId={board.id} />
+            
           </div>
         )}
       </Droppable>
