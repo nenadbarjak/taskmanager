@@ -1,14 +1,14 @@
 import React, { useRef, useState, useContext } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import uuid from 'uuid/v1'
+import moment from 'moment'
 import ListHeader from './ListHeader'
 import AddCardButton from './AddCardButton'
-import CardList from './CardList'
+import Card from './Card'
 import { BoardContext } from '../contexts/BoardContext';
 import { addCard } from '../actions/boardActions'
 
 const List = ({ list, index }) => {
-  //console.log(uuid())
   const { boardsDispatch } = useContext(BoardContext)
 
   const [cardTitle, setCardTitle] = useState()
@@ -118,7 +118,32 @@ const List = ({ list, index }) => {
                   </div>
                 </div>
 
-                <CardList id={list.id} list={list}/>
+                {
+                  list.cards.map((card, index) => {
+                    let textColor = 'black'
+                    if (card.dueDate - moment() < 0) {
+                      textColor = 'red'
+                    } else if (card.dueDate - moment() < 86400000) {
+                      textColor = 'green'
+                    }
+
+                    const finishedChecklistItems = card && card.checklist.filter((item) => {
+                      return item.finished === true
+                    })
+
+                    return (
+                      <Card 
+                        boardId={list.boardId}
+                        card={card} 
+                        textColor={textColor} 
+                        finishedChecklistItems={finishedChecklistItems} 
+                        key={card.id} 
+                        id={card.id}
+                        index={index}  
+                      />
+                    )
+                  })
+                }
                 
                 
                 {provided.placeholder}
