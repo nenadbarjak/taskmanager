@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import uuid from 'uuid/v1'
 import { BoardContext } from '../contexts/BoardContext';
 import { addList } from '../actions/boardActions'
@@ -6,14 +6,7 @@ import { addList } from '../actions/boardActions'
 const NewColumn = ({ boardId }) => {
 
   const [listTitle, setListTitle] = useState('')
-
-  const openForm = () => {
-    document.getElementById('testing').style.display = 'block'
-    document.getElementById('testinput').focus()
-  }
-  const closeForm = () => {
-    document.getElementById('testing').style.display = 'none' 
-  }
+  const [inputVisible, setInputVisible] = useState(false)
 
   const { boardsDispatch } = useContext(BoardContext)
 
@@ -61,35 +54,62 @@ const NewColumn = ({ boardId }) => {
       sendData('Untitled Column')
 
       setListTitle('')
-      closeForm()
+      setInputVisible(false)
     } else {
       sendData(listTitle)
 
       setListTitle('')
-      closeForm()
+      setInputVisible(false)
     }
   }
 
   const handleBlur = (e) => {
     if (!listTitle) {
-      closeForm()
+      setInputVisible(false)
     } else {
       sendData(listTitle)
 
       setListTitle('')
-      closeForm()
+      setInputVisible(false)
     }
   }
 
+  const handleClickOutside = (e) => {
+    const container = document.getElementById('form-container')
+
+    if (container && !container.contains(e.target)) {
+      handleBlur()
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  })
+
   return (
     <div className="new-column">
-      <div className="add-new-column" id="add-column" onClick={openForm}>+ Add column</div>
-        <div id="testing" className="pop-up-form" >
-          <form onSubmit={handleSubmit}>
-            <input id="testinput" type="text" placeholder="Enter list title" value={listTitle} onChange={handleChange} className="new-column-input"  onBlur={handleBlur} />
-
-          </form> 
-        </div>
+      { inputVisible ? (
+          <div id="form-container" className="pop-up-form" >
+            <form onSubmit={handleSubmit}>
+              <input 
+                type="text" 
+                placeholder="Enter list title" 
+                value={listTitle} 
+                onChange={handleChange} 
+                className="new-column-input"  
+                onBlur={handleBlur}
+                autoFocus 
+              />
+            </form> 
+          </div>
+        ) : (
+          <div className="add-new-column" id="add-column" onClick={() => setInputVisible(true)}>
+            <span>+ Add column</span> 
+          </div>
+        )
+      }        
     </div>
   );
 }
