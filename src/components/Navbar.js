@@ -29,10 +29,7 @@ const Navbar = () => {
     setBoardListVisible(false)
   }
 
-  const showOptions = () => {
-    // if (!optionsList.current) {
-    //   setOptionsVisible(true)
-    // }    
+  const showOptions = () => {   
     setOptionsVisible(true)
   }
 
@@ -42,10 +39,6 @@ const Navbar = () => {
     if (options && !options.contains(e.target)) {
       setOptionsVisible(false)
     }
-    // console.log(options)
-    // if (optionsList.current && !optionsList.current.contains(e.target)) {
-    //   setOptionsVisible(false)
-    // }
   }
 
   useEffect(() => {
