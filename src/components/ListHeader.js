@@ -1,10 +1,12 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { BoardContext } from '../contexts/BoardContext';
 import { deleteList, editListTitle } from '../actions/boardActions'
 
 const ListHeader = ({ title, boardId, listId }) => {
 
   const [titleInput, setTitleInput] = useState(title)
+  const [inputVisible, setInputVisible] = useState(false)
+  const [optionsVisible, setOptionsVisible] = useState(false)
 
   const { boardsDispatch } = useContext(BoardContext)
 
@@ -42,45 +44,53 @@ const ListHeader = ({ title, boardId, listId }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    closeInput()
+    setInputVisible(false)
   }
 
   const handleBlur = () => {
     if (!titleInput) {
       sendData('Untitled Column')
 
-      closeInput()
+      setInputVisible(false)
     } else {
       sendData(titleInput)
 
-      closeInput()
+      setInputVisible(false)
     }
   }
 
   const titleInputContainer = useRef()
-  const listTitleInput = useRef()
   const listOptions = useRef()
 
-  const showInput = () => {
-    titleInputContainer.current.style.display = 'block'
-    listTitleInput.current.focus()
-  }
-  const closeInput = () => {
-    titleInputContainer.current.style.display = 'none'
+  const handleClickOutsideInput = (e) => {
+    if (titleInputContainer.current && !titleInputContainer.current.contains(e.target)) {
+      setInputVisible(false)
+    }
   }
 
   const showListOptions = (e) => {
     e.stopPropagation()
-    listOptions.current.style.display = 'flex'
 
-    const closeListOptions = (e) => {
-      if (!e.target.matches('.column-header-options')) {
-        if (listOptions.current) {listOptions.current.style.display = 'none'}
-        document.removeEventListener('click', closeListOptions)
-      }
-    }
-    document.addEventListener('click', closeListOptions)
+    setOptionsVisible(true)
+    
   }
+  const closeListOptions = (e) => {
+    if (listOptions.current && !listOptions.current.contains(e.target)) {
+      setOptionsVisible(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', closeListOptions)
+
+    return () => document.removeEventListener('mousedown', closeListOptions)
+  })
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutsideInput)
+
+    return () => document.removeEventListener('mousedown', handleClickOutsideInput)
+  })
 
   const removeList = (e) => {
     e.stopPropagation()
@@ -100,22 +110,36 @@ const ListHeader = ({ title, boardId, listId }) => {
     })   
   }
   return (
-    <>
-      <div className="column-header" onClick={showInput}>
-        <span>{title}</span>
-        <div className="column-header-options" onClick={showListOptions}>
-          <span className="fas fa-ellipsis-h"></span>
-        </div>
-        <div ref={listOptions} className="list-options-content">
-          <div onClick={removeList}><span style={{color: 'red'}}>Delete Column</span></div>
-        </div>
-      </div>
-      <div ref={titleInputContainer} className="list-title-input">
+    <div className="column-header" onClick={() => setInputVisible(true)}>
+      {inputVisible ? (
+        <div id="titleInputContainer" ref={titleInputContainer} className="list-title-input">
         <form onSubmit={handleSubmit}>
-          <input type="text" ref={listTitleInput} className="list-title-input-text" value={titleInput} onChange={handleChange} onBlur={handleBlur} />
+          <input 
+            type="text" 
+            autoFocus 
+            id="listTitleInput" 
+            className="list-title-input-text" 
+            value={titleInput} 
+            onChange={handleChange} 
+            onBlur={handleBlur} 
+          />
         </form>
-      </div>
-    </>
+        </div>
+      ) : (
+        <div>
+          <span>{title}</span>
+          <div className="column-header-options" onClick={showListOptions}>
+            <span className="fas fa-ellipsis-h"></span>
+          </div>
+          { optionsVisible && (
+            <div id="listOptions" ref={listOptions} className="list-options-content">
+              <div onClick={removeList}><span style={{color: 'red'}}>Delete Column</span></div>
+            </div>
+          )}
+        </div>
+      )}
+      
+    </div>
   );
 }
  

@@ -53,7 +53,7 @@ body {
   color: black;
 }
 .list-options-content {
-  display: none;
+  display: flex;
   flex-direction: column;
   font-weight: normal;
   position: absolute;
@@ -231,11 +231,12 @@ input[type=text] {
   cursor: pointer; 
 }
 .list-title-input {
-  display: none;
+  /* display: none; */
   position: absolute;
-  top: 0;
+  top: -2px;
   left: 0;
-  margin-left: 10px;
+  /* margin-left: 10px; */
+  margin-bottom: 5px;
   width: 278px;
 }
 .list-title-input-text {
