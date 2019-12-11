@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState, useEffect } from 'react';
 import moment from 'moment'
 import { Draggable } from 'react-beautiful-dnd'
 import { BoardContext } from '../contexts/BoardContext'
@@ -7,19 +7,27 @@ import { editCard, deleteCard } from '../actions/boardActions'
 const Card = ({ boardId, card, textColor, finishedChecklistItems, id, index }) => {
   const { boardsDispatch, users } = useContext(BoardContext) 
 
+  const [optionsVisible, setOptionsVisible] = useState(false)
+
   const optionsContent = useRef()
+
   const showOptionsContent = (e) => {
     e.stopPropagation()
-    optionsContent.current.style.display = 'flex'
-
-    const closeOptionsContent = (e) => {
-      if (!e.target.matches('.card-options')) {
-         if (optionsContent.current) {optionsContent.current.style.display = 'none'}
-        document.removeEventListener('click', closeOptionsContent)
-      }
-    }
-    document.addEventListener('click', closeOptionsContent)
+    
+    setOptionsVisible(true)
   }
+
+  const closeOptionsContent = (e) => {
+    if (optionsContent.current && !optionsContent.current.contains(e.target)) {
+      setOptionsVisible(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', closeOptionsContent)
+
+    return () => document.removeEventListener('mousedown', closeOptionsContent)
+  })
 
   let user = users.filter((item) => {
     return item.id === card.assignedTo
@@ -65,7 +73,7 @@ const Card = ({ boardId, card, textColor, finishedChecklistItems, id, index }) =
       sendErrMsg()
     })
 
-    
+    setOptionsVisible(false)
   }
 
   const handleDelete = (e) => {
@@ -153,10 +161,19 @@ const Card = ({ boardId, card, textColor, finishedChecklistItems, id, index }) =
                 </div>
               </div>
             </div>
-            <div className="options-content" ref={optionsContent}>
-              <div onClick={markComplete}><span>{card.completed ? 'Mark Incomplete' : 'Mark Complete'}</span></div>
-              <div onClick={handleDelete}><span style={{color: 'red'}}>Delete Card</span></div>
-            </div>
+            { optionsVisible && (
+              <div className="options-content" ref={optionsContent}>
+                <div onClick={markComplete}>
+                  <span>{card.completed ? 'Mark Incomplete' : 'Mark Complete'}</span>
+                </div>
+                <div onClick={handleDelete}>
+                  <span style={{color: 'red'}}>Delete Card</span>
+                </div>
+              </div>
+              )
+              
+            }
+            
           </div>
         </div>
       )}
