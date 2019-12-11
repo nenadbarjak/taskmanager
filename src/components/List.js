@@ -1,9 +1,8 @@
-import React, { useRef, useState, useContext } from 'react';
+import React, { useRef, useState, useContext, useEffect } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import uuid from 'uuid/v1'
 import moment from 'moment'
 import ListHeader from './ListHeader'
-import AddCardButton from './AddCardButton'
 import Card from './Card'
 import { BoardContext } from '../contexts/BoardContext';
 import { addCard } from '../actions/boardActions'
@@ -12,17 +11,21 @@ const List = ({ list, index }) => {
   const { boardsDispatch } = useContext(BoardContext)
 
   const [cardTitle, setCardTitle] = useState()
+  const [addCardVisible, setAddCardVisible] = useState(false)
 
   const addCardContainer = useRef()
-  const inputEl = useRef()
-  const openForm = () => {
-    addCardContainer.current.style.display = 'block'
-    inputEl.current.focus()
+
+  const handleClickOutside = (e) => {
+    if (addCardContainer.current && !addCardContainer.current.contains(e.target)) {
+      handleBlur()
+    }
   }
-  const closeForm = () => {
-    addCardContainer.current.style.display = 'none'
-    inputEl.current.value = ''
-  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  })
 
   const handleChange = (e) => {
     setCardTitle(e.target.value)
@@ -70,26 +73,26 @@ const List = ({ list, index }) => {
     })
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     if (!cardTitle) {
-      closeForm()
+      setAddCardVisible(false)
     } else {
       sendData(cardTitle)     
       
       setCardTitle('')
-      closeForm()
+      setAddCardVisible(false)
     }
   }
 
   const handleBlur = () => {
     if (!cardTitle) {
-      closeForm()
+      setAddCardVisible(false)
     } else {
       sendData(cardTitle) 
 
       setCardTitle('')
-      closeForm()
+      setAddCardVisible(false)
     }
   }
 
@@ -111,15 +114,26 @@ const List = ({ list, index }) => {
                 ref={provided.innerRef}
                 >
                 <ListHeader title={list.title} listId={list.id} boardId={list.boardId} />
-                <AddCardButton openForm={openForm} />
-                <div>
-                  <div ref={addCardContainer} className="add-card-container">
-                    <form onSubmit={handleSubmit}>
-                      <input ref={inputEl} type="text" onChange={handleChange} className="card-title-input" placeholder="Enter a title for this card" onBlur={handleBlur} />
-        
-                    </form>
-                  </div>
+                <div className="add-card" onClick={() => setAddCardVisible(true)}>
+                  <i className="fas fa-plus"></i>
                 </div>
+                {addCardVisible && (
+                  <div>
+                    <div ref={addCardContainer} className="add-card-container">
+                      <form onSubmit={handleSubmit}>
+                        <input  
+                          autoFocus
+                          type="text" 
+                          onChange={handleChange} 
+                          className="card-title-input" 
+                          placeholder="Enter a title for this card" 
+                          onBlur={handleBlur} 
+                        />          
+                      </form>
+                    </div>
+                  </div>
+                )}
+                
 
                 {
                   list.cards.map((card, index) => {
