@@ -476,11 +476,8 @@ input[type=checkbox] {
 .delete-checklist-item:hover {
   color: black;
 }
-#datepicker {
-  display: none;
-}
+
 #users-list {
-  display: none;
   width: 170px;
 }
 .progress {
