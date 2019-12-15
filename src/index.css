@@ -66,43 +66,9 @@ input[type=text] {
 
 
 
-.modal-content-header {
-  padding-bottom: 15px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  border-bottom: 1px solid #d5dce0;
-  margin-bottom: 8px;
-}
-.mark-complete-button {
-  background: #fff;
-  color: #848f99;
-  border-radius: 4px;
-  border: 1px solid #848f99;
-  height: 30px;
-  font-size: 16px;
-  outline: none !important;
-  transition: all .2s ease;
-}
-.mark-complete-button:focus {
-  outline: none !important;
-}
-.mark-complete-button:hover {
-  color: black;
-  border: 1px solid black;
-  cursor: pointer;
-  background: #f6f8f9;
-}
-.close-modal {
-  cursor: pointer;
-  color: #848f99;
-  font-weight: bold;
-  padding: 2px;
-  transition: all .2s ease;
-}
-.close-modal:hover {
-  color: black;
-}
+
+
+
 .modal-title-assigned-due {
   border-bottom: 1px solid #d5dce0;
   padding-bottom: 20px;
