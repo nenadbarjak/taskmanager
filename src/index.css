@@ -11,43 +11,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-
-.column-header {
-  height: 30px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 5px;
-  position: relative;
-}
-.column-header-options {
-  display: inline-block;
-  position: absolute;
-  right: 10px;
-  color: #848f99;
-  transition: all .2s ease; 
-}
-.column-header-options:hover {
-  color: black;
-}
-.list-options-content {
-  display: flex;
-  flex-direction: column;
-  font-weight: normal;
-  position: absolute;
-  right: 30px;
-  top: 0px;
-  background: #fff;
-  border: 1px solid #848f99;
-  border-radius: 4px;
-  padding: 4px 0px;
-}
-.list-options-content div {
-  padding: 0px 4px;
-}
-.list-options-content div:hover {
-  background: #ccc;
-}
 .add-card {
   padding-top: 0;
   height: 30px;
@@ -184,19 +147,7 @@ input[type=text] {
   margin-left: 15px;
   cursor: pointer; 
 }
-.list-title-input {
-  /* display: none; */
-  position: absolute;
-  top: -2px;
-  left: 0;
-  /* margin-left: 10px; */
-  margin-bottom: 5px;
-  width: 278px;
-}
-.list-title-input-text {
-  font-size: 16px;
-  font-weight: bold;
-}
+
 .card-modal {
   position: absolute;
   top: 40px;

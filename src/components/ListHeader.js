@@ -1,4 +1,5 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
+import '../styles/ListHeader.css'
 import { BoardContext } from '../contexts/BoardContext';
 import { deleteList, editListTitle } from '../actions/boardActions'
 
