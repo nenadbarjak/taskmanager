@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom'
 import { DragDropContext, Droppable } from 'react-beautiful-dnd'
+import '../styles/Board.css'
 import { BoardContext } from '../contexts/BoardContext';
 import List from './List';
 import NewColumn from './NewColumn';

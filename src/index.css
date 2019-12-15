@@ -11,12 +11,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.board {
-  display: flex;
-  background: #f6f8f9;
-  height: 100vh;
-  padding: 15px 10px 0; 
-}
+
 .list-column {
   display: flex;
   flex-direction: column;
