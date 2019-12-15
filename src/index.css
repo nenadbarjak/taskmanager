@@ -33,15 +33,7 @@ body {
 } */
 
 
-
-
-
-
-
-
-
-
-.add-card-container {
+/* .add-card-container {
   height: 77px;
   background: #fff;
   border: 1px solid transparent;
@@ -50,7 +42,7 @@ body {
   cursor: pointer;
   padding: 15px;
   margin-bottom: 10px;  
-}
+} */
 
 
 
@@ -65,88 +57,6 @@ input[type=text] {
 }
 
 
-
-
-
-
-.modal-title-assigned-due {
-  border-bottom: 1px solid #d5dce0;
-  padding-bottom: 20px;
-}
-.modal-title-input {
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 32px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 4px;
-  margin-bottom: 15px;
-}
-.modal-title-input:hover {
-  border: 1px solid #d5dce0;
-  border-radius: 4px;
-}
-.assigned-due-container {
-  display: flex;
-  flex-direction: row;
-}
-.modal-assigned-to {
-  color: #848f99;
-  border-radius: 18px;
-  margin-right: 15px;
-  height: 38px;
-  font-size: 12px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding-left: 4px;
-  padding-right: 4px;
-  transition: all 0.2s ease;
-}
-.modal-assigned-to:hover {
-  color: black;
-  border: 1px solid #646f79;
-  cursor: pointer;
-  background: #f6f8f9;
-}
-.unassign-cleardate {
-  margin-left:8px;
-  visibility: hidden;
-  opacity: .2;
-  transition: all 0.2s ease;
-}
-.unassign-cleardate:hover {
-  opacity: 1;
-}
-.modal-due-date {
-  border-radius: 18px;
-  color: #848f99;
-  height: 38px;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  padding-left: 4px;
-  padding-right: 4px;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  transition: all 0.2s ease;
-}
-.modal-due-date:hover {
-  color: black;
-  border: 1px solid black;
-  cursor: pointer;
-  background: #f6f8f9;
-  border: 1px solid #646f79;
-}
-.calendar-icon {
-  height: 24px;
-  width: 24px;
-  border: 1px solid #848f99;
-  border-radius: 50%;
-  padding: 2px;
-  text-align: center;
-  margin-right: 10px;
-}
 .card-description-input {
   border: none;
   border-radius: 4px;

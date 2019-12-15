@@ -2,6 +2,7 @@ import React, { useContext, useRef, useState } from 'react';
 import moment from 'moment'
 import DatePicker from 'react-datepicker'
 import "react-datepicker/dist/react-datepicker.css";
+import '../styles/ModalTitleAssignDue.css'
 import Select from 'react-select'
 import { BoardContext } from '../contexts/BoardContext';
 import { editCard } from '../actions/boardActions'
