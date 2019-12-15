@@ -1,0 +1,48 @@
+.list-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 300px;
+    padding: 2px 10px 0 ;
+    border: 1px solid transparent;
+    cursor: grab;
+    position: relative;
+    border-radius: 4px;
+}
+
+.add-card {
+    padding-top: 0;
+    height: 30px;
+    width: 280px;
+    margin-bottom: 10px;
+    background: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgba(21, 27, 38, .15);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: grey;
+    transition: all 0.2s ease;
+}
+
+.add-card:hover {
+    color: #14aaf5;
+}
+
+.add-card-container {
+    height: 77px;
+    background: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgba(21, 27, 38, .15);
+    cursor: pointer;
+    padding: 15px;
+    margin-bottom: 10px;  
+}
+
+.card-title-input:focus {
+    outline: none;
+}

@@ -2,6 +2,7 @@ import React, { useRef, useState, useContext, useEffect } from 'react';
 import { Droppable, Draggable } from 'react-beautiful-dnd'
 import uuid from 'uuid/v1'
 import moment from 'moment'
+import '../styles/List.css'
 import ListHeader from './ListHeader'
 import Card from './Card'
 import { BoardContext } from '../contexts/BoardContext';

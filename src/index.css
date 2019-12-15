@@ -12,17 +12,6 @@ body {
 }
 
 
-.list-column {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  width: 300px;
-  padding: 2px 10px 0 ;
-  border: 1px solid transparent;
-  cursor: grab;
-  position: relative;
-  border-radius: 4px;
-}
 .new-column {
   width: 300px;
   padding: 5px 10px 0;
@@ -388,9 +377,7 @@ input[type=text] {
   background: #f6f8f9;
 }
 
-.card-title-input:focus {
-  outline: none;
-}
+
 .modal-description {
   margin-bottom: 15px;
   border-bottom: 1px solid #d5dce0;
