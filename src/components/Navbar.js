@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useState, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom'
 import Select from 'react-select'
+import '../styles/Navbar.css'
 import { BoardContext } from '../contexts/BoardContext';
 import { setAxiosToken } from '../services/axiosPreset'
 import { logOut, logOutAll, deleteUser } from '../actions/authActions'
@@ -15,19 +16,6 @@ const Navbar = () => {
 
   const [optionsVisible, setOptionsVisible] = useState(false)
   const optionsList = useRef()
-
-  const showBoardList = () => {
-    setBoardListVisible(true)
-    
-    if (boardsList.current) {
-      boardsList.current.focus()
-    }
-
-  }
-
-  const closeBoardsList = () => {
-    setBoardListVisible(false)
-  }
 
   const showOptions = () => {   
     setOptionsVisible(true)
@@ -150,22 +138,23 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="nav-wrapper white navbar">
+    <nav className="navbar">
       <div className="header-container">
         <div>
-          <NavLink to='/' className="title-logo"><h1 className="header-main-title">Task Manager</h1></NavLink>
+          <NavLink to='/' className="title-logo"><h1>Task Manager</h1></NavLink>
           <p>( Trello / Asana / Kanban board )</p>
         </div>
-        {auth.token && (<>
+        {auth.token && (
+          <>
           <div className="header-middle">
-            <div className="header-middle-top">
+            <div>
               {
                 boardListVisible ? (
                   <div className="boards-select">
                     <Select
                       ref={boardsList} 
                       options={boards.map((board) => ({value: board.id, label: board.title}))}
-                      onBlur={closeBoardsList}                
+                      onBlur={() => setBoardListVisible(false)}                
                       defaultValue={board ? {value: board.id, label: board.title} : null}
                       defaultMenuIsOpen
                       onChange={handleBoardChange}
@@ -174,7 +163,7 @@ const Navbar = () => {
                   </div>
                 ) : (
                   <div >
-                    <h4>{board ? board.title : 'Select board'}<i onClick={showBoardList} className="angle-down fas fa-angle-down"></i></h4>                
+                    <h4>{board ? board.title : 'Select board'}<i onClick={() => setBoardListVisible(true)} className="angle-down fas fa-angle-down"></i></h4>                
                   </div>
                 )
               }           
@@ -182,37 +171,37 @@ const Navbar = () => {
             <div className="header-middle-bottom"> 
               <NavLink to='/addboard'><button className="add-board-btn">Add New board</button></NavLink>
             </div>
-        </div>
-
-        <div className="header-right">
-          <div onClick={showOptions}>
-            <i className="fas fa-bars fa-lg"></i>
           </div>
-          {optionsVisible && (
-            <div id="header-options" ref={optionsList} className="header-options">
-              <Link to='/addboard'  className="options-addboard">
-                <div>
-                  <span>Add New Board</span>               
-                </div>
-              </Link>
-              <div onClick={removeBoard}>
-                <span style={{color: 'red'}}>Delete Board</span>
-              </div>
-              <div onClick={logout}>
-                <span>Logout</span>
-              </div>
-              <div onClick={logoutAll}>
-                <span>Logout From All Devices</span>
-              </div>
-              <div onClick={deactivateAccount}>
-                <span style={{color: 'red'}}>Deactivate Account</span>
-              </div>
+
+          <div className="header-right">
+            <div onClick={showOptions}>
+              <i className="fas fa-bars fa-lg"></i>
             </div>
-            )
-          }
-        </div>  
-        </>)
-      }     
+            {optionsVisible && (
+              <div id="header-options" ref={optionsList} className="header-options">
+                <Link to='/addboard'  className="options-addboard">
+                  <div onClick={() => setOptionsVisible(false)}>
+                    <span>Add New Board</span>               
+                  </div>
+                </Link>
+                <div onClick={removeBoard}>
+                  <span style={{color: 'red'}}>Delete Board</span>
+                </div>
+                <div onClick={logout}>
+                  <span>Logout</span>
+                </div>
+                <div onClick={logoutAll}>
+                  <span>Logout From All Devices</span>
+                </div>
+                <div onClick={deactivateAccount}>
+                  <span style={{color: 'red'}}>Deactivate Account</span>
+                </div>
+              </div>
+              )
+            }
+          </div>  
+          </>)
+        }     
       </div>
     </nav>
   )
