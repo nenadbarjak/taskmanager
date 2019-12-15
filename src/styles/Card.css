@@ -1,0 +1,116 @@
+.card-container {
+    padding: 0 0 10px;
+    position: relative;
+}
+
+.card {
+    height: 77px;
+    background: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgba(21, 27, 38, .15);
+    cursor: pointer;
+    padding: 15px;
+    transition: all 0.2s ease
+}
+
+.card:hover {
+    box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.completed-card {
+    opacity: 0.7;
+}
+
+.card-title {
+    font-size: 13px;
+}
+
+.card-title-text {
+    margin-left: 8px;
+}
+
+.card-content {
+    display: flex;
+    align-content: center;
+    font-size: 11px;
+    padding-top: 5px;
+}
+
+.avatar {
+    background: #37c5ab;
+    display: flex;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.avatar-unassigned {
+    background: #fff;
+    display: flex;
+    height: 24px;
+    width: 24px;
+    margin-right: 10px;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.due-date {
+    padding-top: 4px;
+    margin-right: 10px;
+}
+
+.card-progress {
+    padding-top: 5px;
+}
+
+.card-options {
+    height: 24px;
+    width: 24px;
+    position: absolute;
+    top: 10px;
+    right: 0;
+    opacity: 0.3;
+    transition: all 0.2s ease;
+    visibility: hidden;
+}
+
+.card-options:hover {
+    opacity: 1;
+}
+
+.open-card-options {
+    position: relative;
+}
+
+.options-content {
+    border: 1px solid #848f99;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 30px;
+    right: 0px;
+    width: 60%;
+    background: #fff;
+    z-index: 1111;
+    padding: 5px 0px;
+}
+
+.options-content div {
+    padding: 0px 10px;
+}
+
+.options-content div:hover {
+    background: #edf1f2;
+}
+

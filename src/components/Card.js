@@ -1,6 +1,7 @@
 import React, { useContext, useRef, useState, useEffect } from 'react';
 import moment from 'moment'
 import { Draggable } from 'react-beautiful-dnd'
+import '../styles/Card.css'
 import { BoardContext } from '../contexts/BoardContext'
 import { editCard, deleteCard } from '../actions/boardActions'
 
@@ -170,14 +171,10 @@ const Card = ({ boardId, card, textColor, finishedChecklistItems, id, index }) =
                   <span style={{color: 'red'}}>Delete Card</span>
                 </div>
               </div>
-              )
-              
-            }
-            
+            )}            
           </div>
         </div>
       )}
-
     </Draggable>
   );
 }
