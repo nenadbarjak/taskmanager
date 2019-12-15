@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import Modal from 'react-modal'
+import '../styles/ModalContent.css'
 import { BoardContext } from '../contexts/BoardContext';
 import { editCard } from '../actions/boardActions'
 import ModalHeader from './ModalHeader';

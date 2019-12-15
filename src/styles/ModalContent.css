@@ -1,0 +1,29 @@
+.card-modal {
+    position: absolute;
+    top: 40px;
+    left: 350px;
+    right: 350px;
+    bottom: 40px;
+    border: 1px solid #ccc;
+    background: #fff;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 4px;
+    outline: none;
+    padding: 20px;
+}
+
+.card-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.64);
+}
+
+.modal-content {
+    padding: 5px 20px;
+    display: flex;
+    flex-direction: column;
+}
