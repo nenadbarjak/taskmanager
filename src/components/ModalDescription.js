@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import '../styles/ModalDescription.css'
 import { BoardContext } from '../contexts/BoardContext';
 import { editCard } from '../actions/boardActions'
 
