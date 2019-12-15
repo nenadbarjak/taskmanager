@@ -1,0 +1,32 @@
+.new-column {
+    width: 300px;
+    padding: 5px 10px 0;
+    position: relative;
+}
+
+.pop-up-form {
+    background: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 rgba(21, 27, 38, .15);
+    padding: 15px;
+    height:30px;
+    width: 278px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+}
+
+.add-new-column {
+    color: #848f99;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.add-new-column:hover{
+    color: #14aaf5;
+}

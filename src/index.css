@@ -12,11 +12,7 @@ body {
 }
 
 
-.new-column {
-  width: 300px;
-  padding: 5px 10px 0;
-  position: relative;
-}
+
 .column-header {
   height: 30px;
   font-weight: bold;
@@ -125,15 +121,7 @@ body {
   box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
-.add-new-column {
-  color: #848f99;
-  width: 100%;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.add-new-column:hover{
-  color: #14aaf5;
-}
+
 
 .avatar {
   background: #37c5ab;
@@ -186,21 +174,7 @@ body {
   padding-top: 4px;
   margin-right: 10px;
 }
-.pop-up-form {
-  background: #fff;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px 0 rgba(21, 27, 38, .15);
-  padding: 15px;
-  height:30px;
-  width: 278px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  padding-left: 0;
-  padding-top: 0;
-  padding-right: 0;
-}
+
 input[type=text] {
   height: 2rem;
   width: 100%;

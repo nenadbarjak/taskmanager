@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import uuid from 'uuid/v1'
+import '../styles/NewColumn.css'
 import { BoardContext } from '../contexts/BoardContext';
 import { addList } from '../actions/boardActions'
 
@@ -97,8 +98,7 @@ const NewColumn = ({ boardId }) => {
                 type="text" 
                 placeholder="Enter list title" 
                 value={listTitle} 
-                onChange={handleChange} 
-                className="new-column-input"  
+                onChange={handleChange}  
                 onBlur={handleBlur}
                 autoFocus 
               />
