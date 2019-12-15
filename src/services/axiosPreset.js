@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-    baseURL: 'http://localhost:9000'
+    baseURL: 'https://task-manager-nenad.herokuapp.com/'
 })
 
 export const setAxiosToken = (token) => {
