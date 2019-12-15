@@ -8,19 +8,12 @@ const ModalChecklist = ({ card, boardId }) => {
   const [checklistNote, setCheckListNote] = useState('')
   const { boardsDispatch } = useContext(BoardContext)
 
-  const showInput = () => {
-    document.getElementById('checklist-input').style.display = 'block'
-    document.getElementById('checklist-button').style.display = 'none'
-    document.getElementById('note-input').focus()
-  }
-  const closeInput = () => {
-    document.getElementById('checklist-input').style.display = 'none'
-  }
+  const [checklistVisible, setChecklistVisible] = useState(false)
+  const [addItemButtonVisible, setAddItemButtonVisible] = useState(true)
 
-  const handleAddButtonClick = () => {
-    document.getElementById('note-input-container').style.display = 'block'
-    document.getElementById('add-item-button').style.display = 'none'
-    document.getElementById('note-input').focus()
+  const showChecklist = () => {
+    setChecklistVisible(true)
+    setAddItemButtonVisible(false)
   }
 
   const sendErrMsg = () => {
@@ -122,11 +115,9 @@ const ModalChecklist = ({ card, boardId }) => {
 
   const handleBlur = () => {
     if (!checklistNote && card.checklist.length === 0) {
-      closeInput()
-      document.getElementById('checklist-button').style.display = 'block'
+      setChecklistVisible(false)
     } else if (!checklistNote) {
-      document.getElementById('note-input-container').style.display = 'none'
-      document.getElementById('add-item-button').style.display = 'block'
+      setAddItemButtonVisible(true)
     } else {
       sendNewItemData(checklistNote)
       
@@ -162,74 +153,76 @@ const ModalChecklist = ({ card, boardId }) => {
   return (  
     <div> 
       <div className="checklist-container">
-        <div 
-          id="checklist-button" 
-          style={card.checklist.length > 0 ? {display: 'none'} : {display: 'block'}}
-        >
-          <button className="checklist-button" onClick={showInput}><span>&#9745; Add checklist</span></button>
-        </div>
-        <div 
-          id="checklist-input" 
-          className="checklist-input" 
-          style={card.checklist.length > 0 ? {display: 'block'} : {display: 'none'}}
-        >
-          <h3>Checklist</h3>
-          {(card.checklist.length > 0) && 
-            <div className="progress">
-              <div 
-                className="progress-bar" 
-                style={{width: `${progress}%`}}
-              >
-                {progress + '%'}
+        { card.checklist.length === 0 && !checklistVisible && 
+          <div>
+            <button className="checklist-button" onClick={showChecklist}><span>&#9745; Add checklist</span></button>
+          </div>
+        }
+        { (checklistVisible || card.checklist.length > 0) && (
+          <div className="checklist-input">
+            <h3>Checklist</h3>
+            {(card.checklist.length > 0) && 
+              <div className="progress">
+                <div 
+                  className="progress-bar" 
+                  style={{width: `${progress}%`}}
+                >
+                  {progress + '%'}
+                </div>
               </div>
-            </div>
-          }
-          {card.checklist.length > 0 && 
-            card.checklist.map((item) => {
-              return (
-                <div key={item.id} className="checklist-item">
-                  <div className="checkbox-container">
-                    <input 
-                      type="checkbox" 
-                      checked={item.finished} 
-                      onChange={(e) => handleCheckboxChange(e, item)}
-                    />
-                  </div>  
-                  <div className="checklist-note-input-container">
+            }
+            {card.checklist.length > 0 && 
+              card.checklist.map((item) => {
+                return (
+                  <div key={item.id} className="checklist-item">
+                    <div className="checkbox-container">
+                      <input 
+                        type="checkbox" 
+                        checked={item.finished} 
+                        onChange={(e) => handleCheckboxChange(e, item)}
+                      />
+                    </div>  
+                    <div className="checklist-note-input-container">
+                      <input 
+                        type="text" 
+                        value={item.note} 
+                        style={item.finished ? ({textDecoration: "line-through"}) : ({})} 
+                        className="checklist-note-input" 
+                        onChange={(e) => handleChecklistNoteChange(e, item)}
+                        onBlur={(e) => handleChecklistNoteInputBlur(e, item)} 
+                      />
+                    </div>
+                    <div 
+                      className="delete-checklist-item" 
+                      onClick={() => removeItem(item.id)}
+                    >
+                      <i className="far fa-trash-alt"></i>
+                    </div>
+                  </div>
+                )
+              })
+            }           
+            { addItemButtonVisible ? (
+                <button className="add-item-button" onClick={() => setAddItemButtonVisible(false)}>Add an item</button>
+              ) : (
+                <div>
+                  <form onSubmit={handleSubmit}>
                     <input 
                       type="text" 
-                      value={item.note} 
-                      style={item.finished ? ({textDecoration: "line-through"}) : ({})} 
-                      className="checklist-note-input" 
-                      onChange={(e) => handleChecklistNoteChange(e, item)}
-                      onBlur={(e) => handleChecklistNoteInputBlur(e, item)} 
+                      id="note-input" 
+                      className="note-input" 
+                      placeholder=" Add an item" 
+                      value={checklistNote} 
+                      onChange={(e) => setCheckListNote(e.target.value)} 
+                      onBlur={handleBlur} 
+                      autoFocus
                     />
-                  </div>
-                  <div 
-                    className="delete-checklist-item" 
-                    onClick={() => removeItem(item.id)}
-                  >
-                    <i className="far fa-trash-alt"></i>
-                  </div>
+                  </form>
                 </div>
-              )
-            })
-          }
-          <div id="note-input-container" style={{display: 'block'}}>
-            <form onSubmit={handleSubmit}>
-              <input 
-                type="text" 
-                id="note-input" 
-                className="note-input" 
-                placeholder=" Add an item" 
-                value={checklistNote} 
-                onChange={(e) => setCheckListNote(e.target.value)} 
-                onBlur={handleBlur} 
-              />
-            </form>
+              )             
+            }
           </div>
-          <button id="add-item-button" className="add-item-button" onClick={handleAddButtonClick}>Add an item</button>
-        </div>
+        )}       
       </div>
     </div>
   );

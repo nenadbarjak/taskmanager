@@ -451,7 +451,6 @@ input[type=checkbox] {
 }
 .add-item-button {
   cursor: pointer;
-  display: none;
   height: 2rem;
   background: #fff;
   color: #848f99;
