@@ -23,6 +23,10 @@
     flex-direction: row;
 }
 
+#users-list {
+    width: 170px;
+}
+
 .modal-assigned-to {
     color: #848f99;
     border-radius: 18px;
