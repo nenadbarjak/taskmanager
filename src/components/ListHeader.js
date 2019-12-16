@@ -4,7 +4,7 @@ import { BoardContext } from '../contexts/BoardContext';
 import { deleteList, editListTitle } from '../actions/boardActions'
 
 const ListHeader = ({ title, boardId, listId }) => {
-
+  
   const [titleInput, setTitleInput] = useState(title)
   const [inputVisible, setInputVisible] = useState(false)
   const [optionsVisible, setOptionsVisible] = useState(false)
@@ -45,7 +45,15 @@ const ListHeader = ({ title, boardId, listId }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    setInputVisible(false)
+    if (!titleInput) {
+      sendData('Untitled Column')
+
+      setInputVisible(false)
+    } else {
+      sendData(titleInput)
+
+      setInputVisible(false)
+    }
   }
 
   const handleBlur = () => {
@@ -65,6 +73,7 @@ const ListHeader = ({ title, boardId, listId }) => {
 
   const handleClickOutsideInput = (e) => {
     if (titleInputContainer.current && !titleInputContainer.current.contains(e.target)) {
+      handleBlur()
       setInputVisible(false)
     }
   }
