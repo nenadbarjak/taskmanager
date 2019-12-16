@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import uuid from 'uuid/v1'
+import '../styles/ModalChecklist.css'
 import { BoardContext } from '../contexts/BoardContext';
 import { addChecklistItem, editChecklistItem, deleteChecklistItem } from '../actions/boardActions'
 
@@ -152,14 +153,14 @@ const ModalChecklist = ({ card, boardId }) => {
 
   return (  
     <div> 
-      <div className="checklist-container">
+      <div>
         { card.checklist.length === 0 && !checklistVisible && 
           <div>
             <button className="checklist-button" onClick={showChecklist}><span>&#9745; Add checklist</span></button>
           </div>
         }
         { (checklistVisible || card.checklist.length > 0) && (
-          <div className="checklist-input">
+          <div>
             <h3>Checklist</h3>
             {(card.checklist.length > 0) && 
               <div className="progress">
@@ -209,8 +210,7 @@ const ModalChecklist = ({ card, boardId }) => {
                   <form onSubmit={handleSubmit}>
                     <input 
                       type="text" 
-                      id="note-input" 
-                      className="note-input" 
+                      id="note-input"  
                       placeholder=" Add an item" 
                       value={checklistNote} 
                       onChange={(e) => setCheckListNote(e.target.value)} 
